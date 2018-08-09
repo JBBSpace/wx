@@ -1,0 +1,28 @@
+@font-face {
+  font-family: 'custom-iconfont';
+  src: url('./iconfont.ttf') format('truetype');
+}
+
+.van-icon {
+  font-family: 'vant-icon', 'custom-iconfont' !important;
+}
+
+.van-icon-people:before {
+  content: "\e647";
+}
+
+.van-icon-lock:before {
+  content: "\e779";
+}
+
+.van-icon-lock1:before {
+  content: "\e930";
+}
+
+.van-icon-people1:before {
+  content: "\e6bf";
+}
+
+.van-icon-people_fill:before {
+  content: "\e715";
+}
