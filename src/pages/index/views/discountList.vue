@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-12 13:26:04 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2018-08-06 14:19:57
+ * @Last Modified time: 2018-08-16 10:00:38
  */
 <template>
   <div>
@@ -136,7 +136,7 @@ export default {
   height: 100px;
   box-sizing: border-box;
   font-size: 0;
-  background: #06bf04;
+  background: #51b8cb;
   color: white;
   position: fixed;
   z-index: 1;
@@ -171,7 +171,7 @@ export default {
   width: 25%;
 }
 .usered {
-  color: #06bf04;
+  color: #51b8cb;
 }
 .disabled {
   color: #999;

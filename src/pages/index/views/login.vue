@@ -19,13 +19,14 @@
   
 <script>
 import "../assets/style/iconfont.css";
-// import loginApi from "@/pages/index/services/login";
+import loginApi from "@/pages/index/services/login";
 export default {
   data() {
     return {
       flag: false,
       username: "",
-      password: ""
+      password: "",
+      erp_company_id: "123456944"
     };
   },
   methods: {
@@ -33,8 +34,25 @@ export default {
       this.flag = !this.flag;
     },
     login() {
-      const data = { username: this.username, password: this.password };
-      scanAPI.stockInfo({ data: data }).then(res => {});
+      if (this.username.length && this.password.length) {
+        const params = {
+          erp_user_id: this.username,
+          erp_user_password: this.password,
+          erp_company_id: this.erp_company_id
+        };
+        loginApi.login({ params: params }).then(res => {
+          const { status, message } = res.data;
+          if (status != "0") {
+            this.$toast(message);
+          } else {
+            this.$router.push({
+              name: "home"
+            });
+          }
+        });
+      }else{
+        this.$toast('请输入用户名或密码');
+      }
     }
   }
 };

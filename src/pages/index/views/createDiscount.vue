@@ -159,10 +159,10 @@ export default {
 <style lang="scss">
 .discountPage {
   .van-tabs__line {
-    background-color: #06bf04;
+    background-color: #51b8cb;
   }
   .van-tab--active {
-    color: #06bf04;
+    color: #51b8cb;
   }
   .van-field .van-cell__title {
     max-width: 375px;
@@ -170,7 +170,7 @@ export default {
   .van-tabs__content {
     padding-bottom: 120px;
     .van-dialog__header {
-      color: #008400;
+      color: #51b8cb;
     }
     .qrcoderContain {
       text-align: center;

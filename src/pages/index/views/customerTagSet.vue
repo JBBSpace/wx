@@ -193,7 +193,7 @@ export default {
       });
     }
   },
-  mounted(){
+  mounted() {
     this.init();
   }
 };
@@ -230,8 +230,8 @@ export default {
           margin-right: 0;
         }
         &.active {
-          color: #4976cc;
-          border-color: #4976cc;
+          color: #51b8cb;
+          border-color: #51b8cb;
         }
       }
     }
@@ -250,22 +250,23 @@ export default {
     color: rgba(255, 255, 255, 1);
     background: -webkit-linear-gradient(
       left,
-      #00baff,
-      #482bf5
+      #51b8cb,
+      #2b89f5
     ); /* Safari 5.1 - 6.0 */
     background: -o-linear-gradient(
       right,
-      #00baff,
-      #482bf5
+      #51b8cb,
+      #2b89f5
     ); /* Opera 11.1 - 12.0 */
     background: -moz-linear-gradient(
-      right #00baff,
-      #482bf5
+      right,
+      #51b8cb,
+      #2b89f5
     ); /* Firefox 3.6 - 15 */
     background: linear-gradient(
       to right,
-      #00baff,
-      #482bf5
+      #51b8cb,
+      #2b89f5
     ); /* 标准的语法（必须放在最后） */
   }
 }

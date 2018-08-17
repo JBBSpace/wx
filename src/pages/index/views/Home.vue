@@ -2,7 +2,7 @@
   <div class="home">
     <div class="logo">汉高</div>
     <div class="discount">
-      <div class="item" v-for="item in discount" :key="item.id">
+      <div class="item" v-for="item in discount" :key="item.id" v-show="isShow(item.id)">
         <img :src="item.imgPath" alt="" @click="go(item.linkName)">
         <p>{{item.text}}</p>
       </div>
@@ -28,6 +28,7 @@
 import util from "@/pages/index/helper/util";
 import wx from "weixin-js-sdk";
 import scanAPI from "@/pages/index/services/scan";
+import homeApi from "@/pages/index/services/home";
 export default {
   data() {
     return {
@@ -89,12 +90,16 @@ export default {
   },
   methods: {
     checkUserId() {
-      if (util.getCookie("userid")) {
-        setTimeout(() => {
-          this.shouldShow = [3, 5,6,7];
-        }, 1000);
-      } else {
+      if (util.getRequest().state == "binding") {
         this.go("login");
+      } else {
+        const params = {company_id:'123456944',wx_user_id:'sys_undefine_users'}
+        homeApi.menus({ params: params }).then(res => {
+        const { data } = res.data;
+      });
+        setTimeout(() => {
+          this.shouldShow = [1, 2, 3, 5, 6, 7];
+        }, 1000);
       }
     },
     isShow(id) {

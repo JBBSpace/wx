@@ -192,8 +192,8 @@ export default {
       line-height: 56px;
       vertical-align: middle;
       &.active {
-        background-color: #67cdfd;
-        border: 1px solid #67cdfd;/*no*/
+        background-color: #51b8cb;
+        border: 1px solid #51b8cb;/*no*/
         color: white;
       }
     }

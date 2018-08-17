@@ -203,8 +203,8 @@ export default {
 
     input[type="checkbox"]:checked::before {
       color: white;
-      border:1px solid #51B8CB;/*no*/
-      background-color: #51B8CB;
+      border:1px solid #51b8cb;/*no*/
+      background-color: #51b8cb;
       content: "✔";
       font-family: "微软雅黑";
     }

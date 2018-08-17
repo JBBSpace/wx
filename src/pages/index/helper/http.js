@@ -7,6 +7,7 @@
  */
 import Axios from 'axios'
 import util from './util'
+import store from '../store/index'
 // 创建自定义实例默认值
 const instance = Axios.create({
   baseURL: util.apiServer,
@@ -15,6 +16,10 @@ const instance = Axios.create({
   responseType: 'json',
   withCredentials: true,
   intercept: 'all' // 拦截器选项,all:then和catch均通过拦截器,resolve:只有then通过拦截器,reject:只有catch通过拦截器,none:then和catch均不通过拦截器
+})
+instance.interceptors.request.use((config) => {
+  store.commit('toggleLoading');
+  return config
 })
 instance.interceptors.response.use(
   (res) => {
@@ -26,9 +31,11 @@ instance.interceptors.response.use(
         // return res
       }
     }
+    store.commit('toggleLoading');
     return res
   },
   (err) => {
+    store.commit('toggleLoading');
     return Promise.reject(err)
   }
 )
