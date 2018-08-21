@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-12 13:26:04 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2018-08-16 10:00:38
+ * @Last Modified time: 2018-08-21 13:19:28
  */
 <template>
   <div>
@@ -68,7 +68,7 @@ export default {
     getTable() {
       const params = {
         count: this.list.length + 1,
-        userid: util.getCookie("userid")
+        userid: util.getCookie("wx_userid")
       };
       discountListApi.getTable({ params: { ...params } }).then(
         res => {

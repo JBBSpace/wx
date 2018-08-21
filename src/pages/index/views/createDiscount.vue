@@ -84,7 +84,7 @@ export default {
       const code = this.$route.query.code ? this.$route.query.code : "";
       const params = {
         code: code,
-        userid: util.getCookie("userid"),
+        userid: util.getCookie("wx_userid"),
         type: 0
       };
       createDiscountApi.getList({ params: { ...params } }).then(res => {
@@ -111,7 +111,7 @@ export default {
     },
     postDiscountData(classObj) {
       const data = {
-        userid: util.getCookie("userid"),
+        userid: util.getCookie("wx_userid"),
         type: this.formData.type
       };
       if (data.type == 0) {

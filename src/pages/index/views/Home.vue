@@ -1,5 +1,5 @@
 <template>  
-  <div class="home">
+  <div class="home" v-show="show">
     <div class="logo">汉高</div>
     <div class="discount">
       <div class="item" v-for="item in discount" :key="item.id" v-show="isShow(item.id)">
@@ -32,6 +32,7 @@ import homeApi from "@/pages/index/services/home";
 export default {
   data() {
     return {
+      show:false,
       shouldShow: [],
       discount: [
         {
@@ -89,17 +90,29 @@ export default {
     };
   },
   methods: {
-    checkUserId() {
-      if (util.getRequest().state == "binding") {
-        this.go("login");
-      } else {
-        const params = {company_id:'123456944',wx_user_id:'sys_undefine_users'}
+    check() {
+      const company_id = util.getRequest().company_id;
+      const wx_userid = util.getCookie("wx_userid");
+      util.setStorage("company_id",company_id);
+      if (wx_userid) {
+        this.show = true;
+        const params = {
+          company_id: '001',
+          wx_user_id: wx_userid
+        };
         homeApi.menus({ params: params }).then(res => {
-        const { data } = res.data;
-      });
-        setTimeout(() => {
-          this.shouldShow = [1, 2, 3, 5, 6, 7];
-        }, 1000);
+          const { data } = res.data;
+          this.shouldShow = data;
+        });
+      } else {
+        homeApi.check({ params: { company_id: company_id } }).then(res => {
+          const { status,uri,message } = res.data;
+          if(status == "0"){
+            window.location.href = uri;
+          }else{
+            this.$toast(message)
+          }
+        });
       }
     },
     isShow(id) {
@@ -154,7 +167,7 @@ export default {
     }
   },
   mounted() {
-    this.checkUserId();
+    this.check();
   }
 };
 </script>  

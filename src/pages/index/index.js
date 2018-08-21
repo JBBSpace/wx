@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-06 10:41:56 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2018-08-17 16:00:11
+ * @Last Modified time: 2018-08-21 14:10:08
  */
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
@@ -43,12 +43,13 @@ import router from './router'
 import 'lib-flexible/flexible.js'
 
 import store from './store'
+import util from "@/pages/index/helper/util";
 
 router.beforeEach((to, from, next) => {
   switch (to.name) {
     case 'home':
-      document.title = "汉高ERP";
       next();
+      document.title = "汉高ERP";
       break;
     case 'login':
       document.title = "绑定账号";

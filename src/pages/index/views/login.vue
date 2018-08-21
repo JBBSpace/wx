@@ -20,13 +20,14 @@
 <script>
 import "../assets/style/iconfont.css";
 import loginApi from "@/pages/index/services/login";
+import util from "@/pages/index/helper/util";
 export default {
   data() {
     return {
       flag: false,
       username: "",
       password: "",
-      erp_company_id: "123456944"
+      code: util.getRequest().code
     };
   },
   methods: {
@@ -34,13 +35,15 @@ export default {
       this.flag = !this.flag;
     },
     login() {
+      console.log()
       if (this.username.length && this.password.length) {
-        const params = {
+        const data = {
           erp_user_id: this.username,
           erp_user_password: this.password,
-          erp_company_id: this.erp_company_id
+          code: this.code,
+          company_id: window.localStorage.getItem('company_id'),
         };
-        loginApi.login({ params: params }).then(res => {
+        loginApi.login({ data: data }).then(res => {
           const { status, message } = res.data;
           if (status != "0") {
             this.$toast(message);
@@ -50,8 +53,8 @@ export default {
             });
           }
         });
-      }else{
-        this.$toast('请输入用户名或密码');
+      } else {
+        this.$toast("请输入用户名或密码");
       }
     }
   }
@@ -100,6 +103,8 @@ export default {
       input {
         height: 50px;
         color: #51b8cb;
+        border: 0px;
+        outline: none;
       }
     }
   }
