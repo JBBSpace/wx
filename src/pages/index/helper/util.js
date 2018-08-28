@@ -2,7 +2,7 @@ export default {
   // 全局路径
   // apiServer: 'http://bs.7psj.cn:9632',
   // apiServer: 'http://hgworker.7psj.cn:9000',
-  apiServer: 'http://192.168.1.179:9001',
+  apiServer: 'http://192.168.1.145:9001',
   imageServer: '/',
   // 本地存储
   setStorage(name, content) {

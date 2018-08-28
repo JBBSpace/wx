@@ -1,7 +1,7 @@
 <template>
   <div class="echart">
     <div class="companyName">
-      <span class="label">公司名称：</span><span class="text" @click="selectCompany">{{company.com_name}}</span>
+      <span class="label">公司名称：</span><span class="text" @click="selectCompany">{{company.name}}</span>
     </div>
     <div class="companyName brandName">
       <span class="label">品牌名称：</span><span class="text" @click="selectBrand">{{brand.name}}</span>
@@ -51,7 +51,7 @@
     <van-popup v-model="show" position="bottom">
       <van-picker
         show-toolbar
-        value-key="com_name"
+        value-key="name"
         :columns="columns"
         @cancel="onCancel"
         @confirm="onConfirm"
@@ -72,8 +72,6 @@
 <script>
 import createDiscountApi from "@/pages/index/services/createDiscount";
 import chartApi from "@/pages/index/services/chart";
-import util from "@/pages/index/helper/util";
-document.title = "周期销售对比报表";
 export default {
   data: function() {
     this.extend = {
@@ -125,7 +123,11 @@ export default {
   },
   methods: {
     initCompanyList() {
-      chartApi.initCompanyList().then(res => {
+      const params = {
+        company_id: window.localStorage.getItem("company_id"),
+        name:'st_company',
+      };
+      chartApi.initCompanyList({ params: { ...params } }).then(res => {
         const { status, message, data } = res.data;
         if (status == 0) {
           this.columns = data;
@@ -137,11 +139,9 @@ export default {
       });
     },
     initBrandList() {
-      const code = this.$route.query.code ? this.$route.query.code : "";
       const params = {
-        code: code,
-        userid: util.getCookie("wx_userid"),
-        type:1
+        company_id: window.localStorage.getItem("company_id"),
+        name:'st_class',
       };
       createDiscountApi.getList({ params: { ...params } }).then(res => {
         const { status, message, data } = res.data;
@@ -157,7 +157,7 @@ export default {
     viewreportData() {
       const params = {
         Datetype: this.curType,
-        company: this.company.com_id ? this.company.com_id : "",
+        company: this.company.id ? this.company.id : "",
         classid: this.brand.classid ? this.brand.classid : ""
       };
       chartApi.viewreportDataCompare({ params: params }).then(res => {

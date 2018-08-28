@@ -81,11 +81,9 @@ export default {
       this.show = true;
     },
     getList() {
-      const code = this.$route.query.code ? this.$route.query.code : "";
       const params = {
-        code: code,
-        userid: util.getCookie("wx_userid"),
-        type: 0
+        company_id: window.localStorage.getItem("company_id"),
+        name:'st_class',
       };
       createDiscountApi.getList({ params: { ...params } }).then(res => {
         this.classList = res.data.data;

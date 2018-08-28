@@ -2,15 +2,15 @@
   <div class="home" v-show="show">
     <div class="logo">汉高</div>
     <div class="discount">
-      <div class="item" v-for="item in discount" :key="item.id" v-show="isShow(item.id)">
-        <img :src="item.imgPath" alt="" @click="go(item.linkName)">
+      <div class="item" v-for="item in discount" :key="item.id" v-show="isShow(item.id)" @click="go(item.linkName)">
+        <img :src="item.imgPath" alt="">
         <p>{{item.text}}</p>
       </div>
     </div>
     <p class="title">我的订阅</p>
     <div class="mySubscibe">
-      <div class="item" v-for="item in mySubscibe" :key="item.id" v-show="isShow(item.id)">
-        <img :src="item.imgPath" alt="" @click="go(item.linkName)">
+      <div class="item" v-for="item in mySubscibe" :key="item.id" v-show="isShow(item.id)" @click="go(item.linkName)">
+        <img :src="item.imgPath" alt="">
         <p>{{item.text}}</p>
       </div>
     </div>
@@ -32,7 +32,7 @@ import homeApi from "@/pages/index/services/home";
 export default {
   data() {
     return {
-      show:false,
+      show: false,
       shouldShow: [],
       discount: [
         {
@@ -91,13 +91,15 @@ export default {
   },
   methods: {
     check() {
-      const company_id = util.getRequest().company_id;
+      const company_id = util.getRequest().company_id
+        ? util.getRequest().company_id
+        : window.localStorage.getItem("company_id");
       const wx_userid = util.getCookie("wx_userid");
-      util.setStorage("company_id",company_id);
+      util.setStorage("company_id", company_id);
       if (wx_userid) {
         this.show = true;
         const params = {
-          company_id: '001',
+          company_id: company_id,
           wx_user_id: wx_userid
         };
         homeApi.menus({ params: params }).then(res => {
@@ -106,11 +108,11 @@ export default {
         });
       } else {
         homeApi.check({ params: { company_id: company_id } }).then(res => {
-          const { status,uri,message } = res.data;
-          if(status == "0"){
+          const { status, uri, message } = res.data;
+          if (status == "0") {
             window.location.href = uri;
-          }else{
-            this.$toast(message)
+          } else {
+            this.$toast(message);
           }
         });
       }
@@ -126,8 +128,12 @@ export default {
       }
     },
     scan: function() {
+      // this.$router.push({
+      //   name: "scan"
+      // });
       const params = {
-        url: window.location.href
+        url: window.location.href.split('#')[0],
+        company_id: window.localStorage.getItem("company_id")
       };
       const _this = this;
       scanAPI.wxSdkConfig({ data: params }).then(res => {
@@ -135,7 +141,7 @@ export default {
         wx.config({
           beta: true, // 必须这么写，否则wx.invoke调用形式的jsapi会有问题
           // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-          // debug: true,
+          debug: true,
           // 必填，公众号的唯一标识
           appId: res.data.appid,
           // 必填，生成签名的时间戳

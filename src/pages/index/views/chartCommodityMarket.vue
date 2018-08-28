@@ -1,7 +1,7 @@
 <template>
   <div class="echart">
     <div class="companyName">
-      <span class="label">公司名称：</span><span class="text" @click="selectCompany">{{company.com_name}}</span>
+      <span class="label">公司名称：</span><span class="text" @click="selectCompany">{{company.name}}</span>
     </div>
     <div class="echartType">
       <span class="label">报表类型：</span><span v-for="item in echartTypeList" :class="[{ active: isActive(item.type) }, 'item']" :key="item.type" @click="toggleType(item.type)">{{item.text}}</span>
@@ -23,7 +23,7 @@
     <van-popup v-model="show" position="bottom">
       <van-picker
         show-toolbar
-        value-key="com_name"
+        value-key="name"
         :columns="columns"
         @cancel="onCancel"
         @confirm="onConfirm"
@@ -34,7 +34,6 @@
 
 <script>
 import chartApi from "@/pages/index/services/chart";
-document.title = "商品销售对比报表"
 export default {
   data: function() {
     this.chartSettings = {
@@ -88,7 +87,11 @@ export default {
   },
   methods: {
     initCompanyList() {
-      chartApi.initCompanyList().then(res => {
+      const params = {
+        company_id: window.localStorage.getItem("company_id"),
+        name:'st_company',
+      };
+      chartApi.initCompanyList({ params: { ...params } }).then(res => {
         const { status, message, data } = res.data;
         if (status == 0) {
           this.columns = data;
@@ -101,8 +104,9 @@ export default {
     },
     viewreportData() {
       const params = {
+        company_id:window.localStorage.getItem("company_id"),
         Datetype: this.curType,
-        company: this.company.com_id ? this.company.com_id : ""
+        comid: this.company.id ? this.company.id : ""
       };
       chartApi.viewreportDataClass({ params: params }).then(res => {
         const { status, message, data } = res.data;

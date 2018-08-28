@@ -37,7 +37,6 @@
 
 <script>
 import chartApi from "@/pages/index/services/chart";
-document.title = "公司销售报表";
 export default {
   data: function() {
     this.chartSettings = {

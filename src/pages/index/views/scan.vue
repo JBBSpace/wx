@@ -21,7 +21,8 @@ export default {
   methods: {
     scan: function() {
       const params = {
-        url: window.location.href
+        url: encodeURIComponent(window.location.href.split('#')[0]),
+        company_id: window.localStorage.getItem("company_id")
       };
       const _this = this;
       scanAPI.wxSdkConfig({ data: params }).then(res => {

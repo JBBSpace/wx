@@ -3,7 +3,7 @@ import buildService from '@/pages/index/helper/service'
 // 值类型为String或Object,String为url(method),Object同axios(config)参数支持相同,data和params只能为对象类型
 const settings = {
   initCompanyList: {
-    url: '/report/viewreport/getcominfo/',
+    url: '/baseinfo/syncdata/',
     method: 'get'
   },
   viewreportData: {
@@ -11,7 +11,7 @@ const settings = {
     method: 'get'
   },
   viewreportDataClass: {
-    url: '/report/viewreport/rep_class/',
+    url: '/report/rep_class/',
     method: 'get'
   },
   viewreportDataCompare: {
