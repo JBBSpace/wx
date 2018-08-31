@@ -1,6 +1,6 @@
 <template>  
   <div class="home" v-show="show">
-    <div class="logo">汉高</div>
+    <div class="logo">报表</div>
     <div class="discount">
       <div class="item" v-for="item in discount" :key="item.id" v-show="isShow(item.id)" @click="go(item.linkName)">
         <img :src="item.imgPath" alt="">
@@ -16,9 +16,13 @@
     </div>
     <p class="title"></p>
     <div class="fnModule">
-      <div class="item" v-for="item in fnModule" :key="item.id" @click="scan">
-        <img :src="item.imgPath" alt="">
-        <p>{{item.text}}</p>
+      <div class="item" @click="scan">
+        <p class="saoma"><van-icon name="saoyisao"/></p>
+        <p>扫一扫</p>
+      </div>
+      <div class="item" @click="menuset">
+        <img class="menuset" src="../assets/home/10.png" alt="">
+        <p>用户菜单配置</p>
       </div>
     </div>
   </div>
@@ -57,7 +61,7 @@ export default {
         },
         {
           imgPath: require("../assets/home/b.png"),
-          text: "新周期销售对比表",
+          text: "周期销售表",
           linkName: "chartPeriodComparison",
           id: 4
         },
@@ -75,7 +79,7 @@ export default {
         },
         {
           imgPath: require("../assets/home/e.png"),
-          text: "商品销售对比表",
+          text: "类别销售对比表",
           linkName: "chartCommodityMarket",
           id: 7
         }
@@ -85,6 +89,11 @@ export default {
           imgPath: require("../assets/home/scan.png"),
           text: "扫一扫",
           id: 8
+        },
+        {
+          imgPath: require("../assets/home/scan.png"),
+          text: "用户菜单配置",
+          id: 9
         }
       ]
     };
@@ -128,9 +137,6 @@ export default {
       }
     },
     scan: function() {
-      // this.$router.push({
-      //   name: "scan"
-      // });
       const params = {
         url: window.location.href.split('#')[0],
         company_id: window.localStorage.getItem("company_id")
@@ -141,7 +147,7 @@ export default {
         wx.config({
           beta: true, // 必须这么写，否则wx.invoke调用形式的jsapi会有问题
           // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-          debug: true,
+          // debug: true,
           // 必填，公众号的唯一标识
           appId: res.data.appid,
           // 必填，生成签名的时间戳
@@ -170,6 +176,11 @@ export default {
           }
         });
       });
+    },
+    menuset(){
+      this.$router.push({
+          name: 'menuSet'
+        });
     }
   },
   mounted() {
@@ -243,10 +254,14 @@ export default {
       box-sizing: border-box;
       border-right: 1px solid #e5e5e5;
       border-bottom: 1px solid #e5e5e5;
+      .saoma{
+        font-size: 58px;
+        color:#43a636;
+      }
       img {
         width: 60px;
         height: 60px;
-        margin: 6px auto;
+        margin: 8px auto;
       }
     }
   }

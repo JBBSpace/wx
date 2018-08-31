@@ -7,22 +7,68 @@
   font-family: 'vant-icon', 'custom-iconfont' !important;
 }
 
-.van-icon-people:before {
-  content: "\e647";
-}
+.van-icon-liebiao:before { content: "\3484"; }
 
-.van-icon-lock:before {
-  content: "\e779";
-}
+.van-icon-caidan:before { content: "\e640"; }
 
-.van-icon-lock1:before {
-  content: "\e930";
-}
+.van-icon-liebiao1:before { content: "\e653"; }
 
-.van-icon-people1:before {
-  content: "\e6bf";
-}
+.van-icon-list:before { content: "\e62f"; }
 
-.van-icon-people_fill:before {
-  content: "\e715";
-}
+.van-icon-1:before { content: "\e621"; }
+
+.van-icon-zhekou:before { content: "\e6eb"; }
+
+.van-icon-suo:before { content: "\e65b"; }
+
+.van-icon-caidanliebiao2:before { content: "\e645"; }
+
+.van-icon-icon1:before { content: "\e605"; }
+
+.van-icon-gongsi:before { content: "\e7e1"; }
+
+.van-icon-ren:before { content: "\e602"; }
+
+.van-icon-gongsi1:before { content: "\e615"; }
+
+.van-icon-caidanliebiao:before { content: "\e631"; }
+
+.van-icon-caidan1:before { content: "\e604"; }
+
+.van-icon-ren1:before { content: "\e612"; }
+
+.van-icon-saoyisao:before { content: "\e60e"; }
+
+.van-icon-zhuzhuangtu:before { content: "\e68d"; }
+
+.van-icon-changzhekou:before { content: "\e7cf"; }
+
+.van-icon-jpcompany:before { content: "\e632"; }
+
+.van-icon-zhekouquan:before { content: "\e64d"; }
+
+.van-icon-saoyisao1:before { content: "\e7aa"; }
+
+.van-icon-ren2:before { content: "\e61a"; }
+
+.van-icon-saoyisao2:before { content: "\e67f"; }
+
+.van-icon-ren3:before { content: "\e505"; }
+
+.van-icon-zhekou1:before { content: "\e81c"; }
+
+.van-icon-list1:before { content: "\e6da"; }
+
+.van-icon-liebiao2:before { content: "\e676"; }
+
+.van-icon-caidan2:before { content: "\e648"; }
+
+.van-icon-gongsi2:before { content: "\e693"; }
+
+.van-icon-ren4:before { content: "\e650"; }
+
+.van-icon-ren5:before { content: "\e6a5"; }
+
+.van-icon-zhekouqia:before { content: "\e513"; }
+
+.van-icon-zhuzhuangtu1:before { content: "\e730"; }

@@ -59,7 +59,7 @@ export default {
       show: false,
       company: {},
       columns: [],
-      curType: "2",
+      curType: "3",
       echartTypeList: [
         {
           text: "日报",

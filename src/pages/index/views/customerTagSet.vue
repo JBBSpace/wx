@@ -1,7 +1,12 @@
 <template>  
 <div class="customerTagSet">
-  <div class="classify" v-for="lev1 in classify" :key="lev1.label_id">
-    <p class="title">{{lev1.label_name}}</p>
+  <div class="classify" v-for="(lev1,index) in classify" :key="lev1.label_id">
+    <div class="title">
+      <p class="titlebg">
+        <span>{{(index<10)?'0'+Number(index+1):''+Number(index+1)}}</span>
+        <span class="subtitle">{{lev1.label_name}}</span>
+      </p>
+    </div>
     <div class="tags">
       <span v-for="tag in lev1.label_item_list" :class="[tag.label_item_selected ? 'active' : '', 'tag']" 
       :key="tag.label_item_id" @click="toggleTag(lev1.label_item_list,tag.label_item_id)">{{tag.label_item_name}}</span>
@@ -12,6 +17,7 @@
 </template>  
   
 <script>
+import util from "@/pages/index/helper/util";
 import customerTagSetApi from "@/pages/index/services/customerTagSet";
 export default {
   data() {
@@ -152,11 +158,14 @@ export default {
   },
   methods: {
     init() {
-      const params = { client_id: "0508170430001" };
-      customerTagSetApi.labelList({ params: params }).then(res => {
-        const { data } = res.data;
-        this.classify = data;
-      });
+      customerTagSetApi
+        .labelList({
+          url: `/retail/lableinfo/${util.getRequest().id}/`
+        })
+        .then(res => {
+          const { data } = res.data;
+          this.classify = data;
+        });
     },
     toggleTag(tags, id) {
       tags.map(function(tag) {
@@ -168,6 +177,11 @@ export default {
       });
     },
     submit() {
+      // this.$dialog.alert({
+      //   message: "弹窗内容<br/>kkkk"
+      // }).then(() => {
+      //   // on close
+      // });
       const label_list = [];
       this.classify.map(function(item) {
         const flag = item.label_item_list.map(function(tag) {
@@ -184,7 +198,7 @@ export default {
         });
       });
       const data = {
-        client_id: "0508170430001",
+        id: util.getRequest().id,
         label_list: label_list
       };
       customerTagSetApi.setClientLabel({ data: data }).then(res => {
@@ -204,12 +218,28 @@ export default {
   padding-bottom: 190px;
   .classify {
     .title {
+      background-color: #F2F2F2;
+      padding:25px 0 10px 0;
       font-size: 32px;
-      color: rgba(102, 102, 102, 1);
-      padding: 25px;
+      color: #fff;
+      .titlebg{
+        padding:0 5px;
+        height:85px;
+        line-height: 85px;
+        box-sizing: border-box;
+        background: #F2F2F2 url(../assets/customerTagSet/tagtitle.png) no-repeat left center ;
+        background-size: 388px 84px;
+        vertical-align: middle;
+        span{
+          font-size: 55px;
+          text-indent: 10px;
+        }
+        .subtitle{
+          font-size: 32px;
+        }
+      }
     }
     .tags {
-      background: #fff;
       padding: 25px 25px 0 25px;
       display: flex;
       flex-wrap: wrap;
@@ -217,7 +247,7 @@ export default {
         width: 204px;
         height: 80px;
         box-sizing: border-box;
-        border: 1px solid #f2f2f2; /*no*/
+        border: 1px solid #ddd9d9d3; /*no*/
         border-radius: 16px;
         text-align: center;
         line-height: 80px;
@@ -230,8 +260,9 @@ export default {
           margin-right: 0;
         }
         &.active {
-          color: #51b8cb;
+          color: #fff;
           border-color: #51b8cb;
+          background: #51b8cb;
         }
       }
     }
@@ -253,16 +284,6 @@ export default {
       #51b8cb,
       #2b89f5
     ); /* Safari 5.1 - 6.0 */
-    background: -o-linear-gradient(
-      right,
-      #51b8cb,
-      #2b89f5
-    ); /* Opera 11.1 - 12.0 */
-    background: -moz-linear-gradient(
-      right,
-      #51b8cb,
-      #2b89f5
-    ); /* Firefox 3.6 - 15 */
     background: linear-gradient(
       to right,
       #51b8cb,

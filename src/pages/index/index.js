@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-06 10:41:56 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2018-08-21 14:10:08
+ * @Last Modified time: 2018-08-31 15:25:54
  */
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
@@ -24,6 +24,7 @@ import {
   Picker,
   Button,
   Switch,
+  SwitchCell,
   NavBar,
   Cell,
   CellGroup,
@@ -35,7 +36,7 @@ import {
 import VCharts from 'v-charts';
 Vue.use(VCharts);
 Vue.use(Tab).use(Tabs).use(Field).use(List).use(Collapse).use(CellGroup).use(CollapseItem).use(PullRefresh).use(Dialog).use(Panel).use(Tabbar).use(Loading).use(Popup);
-Vue.use(Button).use(Picker).use(Switch).use(NavBar).use(Cell).use(CellGroup).use(Icon).use(Toast);
+Vue.use(Button).use(Picker).use(Switch).use(SwitchCell).use(NavBar).use(Cell).use(CellGroup).use(Icon).use(Toast);
 Vue.use(Checkbox).use(CheckboxGroup);
 
 import App from './App'
@@ -43,7 +44,6 @@ import router from './router'
 import 'lib-flexible/flexible.js'
 
 import store from './store'
-import util from "@/pages/index/helper/util";
 
 router.beforeEach((to, from, next) => {
   switch (to.name) {
@@ -64,7 +64,7 @@ router.beforeEach((to, from, next) => {
       next();
       break;
     case 'chartPeriodComparison':
-      document.title = "新周期销售对比表";
+      document.title = "周期销售表";
       next();
       break;
     case 'chartCompanyMarket':
@@ -72,7 +72,7 @@ router.beforeEach((to, from, next) => {
       next();
       break;
     case 'chartCommodityMarket':
-      document.title = "商品销售对比表";
+      document.title = "类别销售对比表";
       next();
       break;
     case 'alarm':
@@ -84,13 +84,17 @@ router.beforeEach((to, from, next) => {
       next();
       break;
     case 'customerTagSet':
-      document.title = "顾客信息";
+      document.title = "顾客标签设置";
       next();
       break;
     case 'scan':
       next();
       break;
     case 'scanResult':
+      next();
+      break;
+    case 'menuSet':
+      document.title = "用户菜单配置";
       next();
       break;
     default:

@@ -1,7 +1,7 @@
 <template>
   <div class="echart">
     <div class="companyName">
-      <span class="label">公司名称：</span><span class="text" @click="selectCompany">{{company.com_name}}</span>
+      <span class="label">公司名称：</span><span class="text" @click="selectCompany">{{company.name}}</span>
     </div>
     <div class="echartType">
       <span class="label">报表类型：</span><span v-for="item in echartTypeList" :class="[{ active: isActive(item.type) }, 'item']" :key="item.type" @click="toggleType(item.type)">{{item.text}}</span>
@@ -26,7 +26,7 @@
     <van-popup v-model="show" position="bottom">
       <van-picker
         show-toolbar
-        value-key="com_name"
+        value-key="name"
         :columns="columns"
         @cancel="onCancel"
         @confirm="onConfirm"
@@ -83,11 +83,11 @@ export default {
       ],
       echartTypeList02: [
         {
-          text: "每平米销售金额",
+          text: "每平米",
           type: "0"
         },
         {
-          text: "每1万租金销售金额",
+          text: "每万租金",
           type: "1"
         }
       ],
@@ -100,7 +100,11 @@ export default {
   },
   methods: {
     initCompanyList() {
-      chartApi.initCompanyList().then(res => {
+      const params = {
+        company_id: window.localStorage.getItem("company_id"),
+        name:'st_company',
+      };
+      chartApi.initCompanyList({ params: { ...params } }).then(res => {
         const { status, message, data } = res.data;
         if (status == 0) {
           this.columns = data;
@@ -115,7 +119,7 @@ export default {
       const params = {
         Datetype: this.curType,
         qryType: this.curType02,
-        company: this.company.com_id ? this.company.com_id : ""
+        company: this.company.id ? this.company.id : ""
       };
       chartApi.viewreportData({ params: params }).then(res => {
         const { status, message, data } = res.data;
@@ -218,7 +222,7 @@ export default {
       }
     }
     .item02 {
-      width: 240px;
+      width: 200px;
       display: inline-block;
       height: 56px;
       border: 1px solid #727171; /*no*/

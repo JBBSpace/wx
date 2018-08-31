@@ -63,5 +63,10 @@ export default new Router({
       name: 'login',
       component: resolve => require(['@/pages/index/views/login'], resolve)
     },
+    {
+      path: '/menuSet',
+      name: 'menuSet',
+      component: resolve => require(['@/pages/index/views/menuSet'], resolve)
+    },
   ]
 })

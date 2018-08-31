@@ -34,6 +34,7 @@ body {
   /* background: #F2F2F2; */
   #loading {
     position: fixed;
+    z-index: 1000000;
     background: #666;
     width: 100%;
     top: 0;

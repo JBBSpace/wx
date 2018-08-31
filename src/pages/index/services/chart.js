@@ -15,7 +15,7 @@ const settings = {
     method: 'get'
   },
   viewreportDataCompare: {
-    url: '/report/viewreport/rep_compare/',
+    url: '/report/rep_compare/',
     method: 'get'
   }
 }

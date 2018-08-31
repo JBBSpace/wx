@@ -3,12 +3,12 @@
     <div class="logo"></div>
     <div class="form">
       <div class="username" :class="[username.length ? 'active' : '', '']">
-        <div class="iconLeft"><van-icon name="people"/></div>
+        <div class="iconLeft"><van-icon name="ren2"/></div>
         <div class="ipt"><input type="text" placeholder="汉高账号" v-model="username"></div>
         <div class="iconRight"><van-icon name="clear" v-show="username.length" @click="username=''"/></div>
       </div>
       <div class="password" :class="[password.length ? 'active' : '']">
-        <div class="iconLeft"><van-icon name="lock"/></div>
+        <div class="iconLeft"><van-icon name="suo"/></div>
         <div class="ipt"><input :type="flag?'':'password'" placeholder="密码" v-model="password"></div>
         <div class="iconRight" @click="toggleFlag()"><van-icon :name="flag?'password-view':'password-not-view'" v-show="password.length"/></div>
       </div>
