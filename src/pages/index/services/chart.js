@@ -7,7 +7,6 @@ const settings = {
     method: 'get'
   },
   viewreportData: {
-    url: '/report/viewreport/rep_xs/',
     method: 'get'
   },
   viewreportDataClass: {

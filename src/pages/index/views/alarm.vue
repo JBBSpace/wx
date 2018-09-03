@@ -6,11 +6,12 @@
     </van-cell-group>
     <div class="weeks">
         <van-cell-group>
-          <van-cell v-for="(item,index) in weeks" :key="index" :title="item.title">
+          <van-cell v-for="(item,index) in weeks" :key="index" :title="item.title" @click="selectWeek(item.id)">
             <input type="checkbox" :id="item.id" :value="item.id" v-model="weeksChecked">
           </van-cell>
         </van-cell-group>
     </div>
+    {{weeksChecked}}
   </div>
 </template>  
   
@@ -167,6 +168,17 @@ export default {
         lv2Val.push(JSON.parse(Object.keys(item)));
       });
       picker.setColumnValues(1, lv2Val);
+    },
+    selectWeek(id) {
+      var e = e || window.event;
+      if (e.target.nodeName == "INPUT") {
+        e.cancelBubble = true;
+        e.stopPropagation();
+      } else {
+        this.weeksChecked.includes(id)
+          ? this.weeksChecked.splice(this.weeksChecked.indexOf(id), 1)
+          : this.weeksChecked.push(id);
+      }
     }
   }
 };
@@ -182,28 +194,31 @@ export default {
       width: 40px;
       height: 40px;
       vertical-align: middle;
+      color: white;
+      border: none;
     }
 
     input[type="checkbox"]::before {
       content: "";
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 40px;
-      height: 40px;
+      z-index: 800;
+      top: -2px;
+      left: -2px;
+      width: 44px;
+      height: 44px;
       line-height: 40px;
       text-align: center;
       color: white;
       font-size: 28px;
       background-color: white;
-      border:1px solid #999;/*no*/
+      border: 1px solid #999; /*no*/
       box-sizing: border-box;
       border-radius: 4px;
     }
 
     input[type="checkbox"]:checked::before {
       color: white;
-      border:1px solid #51b8cb;/*no*/
+      border: 1px solid #51b8cb; /*no*/
       background-color: #51b8cb;
       content: "✔";
       font-family: "微软雅黑";

@@ -44,11 +44,6 @@ export default new Router({
       component: resolve => require(['@/pages/index/views/alarmList'], resolve)
     },
     {
-      path: '/scan',
-      name: 'scan',
-      component: resolve => require(['@/pages/index/views/scan'], resolve)
-    },
-    {
       path: '/scanResult/:code',
       name: 'scanResult',
       component: resolve => require(['@/pages/index/views/scanResult'], resolve)

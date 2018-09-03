@@ -117,11 +117,12 @@ export default {
     },
     viewreportData() {
       const params = {
+        company_id:window.localStorage.getItem("company_id"),
         Datetype: this.curType,
-        qryType: this.curType02,
-        company: this.company.id ? this.company.id : ""
+        comid: this.company.id ? this.company.id : ""
       };
-      chartApi.viewreportData({ params: params }).then(res => {
+      const urlStr = this.curType02 =="0"?'/report/rep_rentA/':'/report/rep_rentB/';
+      chartApi.viewreportData({ url: urlStr, params: params }).then(res => {
         const { status, message, data } = res.data;
         this.dataEmpty = true;
         if (status == 0) {

@@ -3,8 +3,8 @@
   <div class="classify" v-for="(lev1,index) in classify" :key="lev1.label_id">
     <div class="title">
       <p class="titlebg">
-        <span>{{(index<10)?'0'+Number(index+1):''+Number(index+1)}}</span>
-        <span class="subtitle">{{lev1.label_name}}</span>
+        <span class="indextitle">{{(index<10)?'0'+Number(index+1):''+Number(index+1)}}</span>
+        <span class="texttitle">{{lev1.label_name}}</span>
       </p>
     </div>
     <div class="tags">
@@ -19,140 +19,141 @@
 <script>
 import util from "@/pages/index/helper/util";
 import customerTagSetApi from "@/pages/index/services/customerTagSet";
+import "../assets/style/iconfont.css";
 export default {
   data() {
     return {
       classify: [
-        {
-          label_id: "1",
-          label_name: "年龄段",
-          label_item_list: [
-            {
-              label_item_selected: false,
-              label_item_name: "少年",
-              label_item_id: "1.1"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "中年",
-              label_item_id: "1.2"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "老年",
-              label_item_id: "1.3"
-            }
-          ]
-        },
-        {
-          label_id: "2",
-          label_name: "消费能力",
-          label_item_list: [
-            {
-              label_item_selected: false,
-              label_item_name: "低",
-              label_item_id: "2.1"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "中",
-              label_item_id: "2.2"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "高",
-              label_item_id: "2.3"
-            }
-          ]
-        },
-        {
-          label_id: "3",
-          label_name: "顾客亲和力",
-          label_item_list: [
-            {
-              label_item_selected: true,
-              label_item_name: "差",
-              label_item_id: "3.1"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "一般",
-              label_item_id: "3.2"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "好",
-              label_item_id: "3.3"
-            }
-          ]
-        },
-        {
-          label_id: "4",
-          label_name: "顾客职业",
-          label_item_list: [
-            {
-              label_item_selected: true,
-              label_item_name: "学生",
-              label_item_id: "4.1"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "白领",
-              label_item_id: "4.2"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "医生",
-              label_item_id: "4.3"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "教师",
-              label_item_id: "4.4"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "文员",
-              label_item_id: "4.5"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "工厂",
-              label_item_id: "4.6"
-            }
-          ]
-        },
-        {
-          label_id: "5",
-          label_name: "顾客类型",
-          label_item_list: [
-            {
-              label_item_selected: true,
-              label_item_name: "商务人士",
-              label_item_id: "5.1"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "潮流人士",
-              label_item_id: "5.2"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "时尚达人",
-              label_item_id: "5.3"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "奢侈品用户",
-              label_item_id: "5.4"
-            },
-            {
-              label_item_selected: false,
-              label_item_name: "新消费人士",
-              label_item_id: "5.5"
-            }
-          ]
-        }
+        // {
+        //   label_id: "1",
+        //   label_name: "年龄段",
+        //   label_item_list: [
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "少年",
+        //       label_item_id: "1.1"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "中年",
+        //       label_item_id: "1.2"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "老年",
+        //       label_item_id: "1.3"
+        //     }
+        //   ]
+        // },
+        // {
+        //   label_id: "2",
+        //   label_name: "消费能力",
+        //   label_item_list: [
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "低",
+        //       label_item_id: "2.1"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "中",
+        //       label_item_id: "2.2"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "高",
+        //       label_item_id: "2.3"
+        //     }
+        //   ]
+        // },
+        // {
+        //   label_id: "3",
+        //   label_name: "顾客亲和力",
+        //   label_item_list: [
+        //     {
+        //       label_item_selected: true,
+        //       label_item_name: "差",
+        //       label_item_id: "3.1"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "一般",
+        //       label_item_id: "3.2"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "好",
+        //       label_item_id: "3.3"
+        //     }
+        //   ]
+        // },
+        // {
+        //   label_id: "4",
+        //   label_name: "顾客职业",
+        //   label_item_list: [
+        //     {
+        //       label_item_selected: true,
+        //       label_item_name: "学生",
+        //       label_item_id: "4.1"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "白领",
+        //       label_item_id: "4.2"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "医生",
+        //       label_item_id: "4.3"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "教师",
+        //       label_item_id: "4.4"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "文员",
+        //       label_item_id: "4.5"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "工厂",
+        //       label_item_id: "4.6"
+        //     }
+        //   ]
+        // },
+        // {
+        //   label_id: "5",
+        //   label_name: "顾客类型",
+        //   label_item_list: [
+        //     {
+        //       label_item_selected: true,
+        //       label_item_name: "商务人士",
+        //       label_item_id: "5.1"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "潮流人士",
+        //       label_item_id: "5.2"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "时尚达人",
+        //       label_item_id: "5.3"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "奢侈品用户",
+        //       label_item_id: "5.4"
+        //     },
+        //     {
+        //       label_item_selected: false,
+        //       label_item_name: "新消费人士",
+        //       label_item_id: "5.5"
+        //     }
+        //   ]
+        // }
       ]
     };
   },
@@ -177,11 +178,6 @@ export default {
       });
     },
     submit() {
-      // this.$dialog.alert({
-      //   message: "弹窗内容<br/>kkkk"
-      // }).then(() => {
-      //   // on close
-      // });
       const label_list = [];
       this.classify.map(function(item) {
         const flag = item.label_item_list.map(function(tag) {
@@ -203,7 +199,14 @@ export default {
       };
       customerTagSetApi.setClientLabel({ data: data }).then(res => {
         const { message } = res.data;
-        this.$toast(message);
+        // this.$toast(message);
+        this.$dialog
+          .alert({
+            message: "提交成功"
+          })
+          .then(() => {
+            history.back();
+          });
       });
     }
   },
@@ -218,24 +221,29 @@ export default {
   padding-bottom: 190px;
   .classify {
     .title {
-      background-color: #F2F2F2;
-      padding:25px 0 10px 0;
+      background-color: #f2f2f2;
+      padding: 25px 0 10px 0;
       font-size: 32px;
       color: #fff;
-      .titlebg{
-        padding:0 5px;
-        height:85px;
-        line-height: 85px;
+      .titlebg {
+        height: 85px;
         box-sizing: border-box;
-        background: #F2F2F2 url(../assets/customerTagSet/tagtitle.png) no-repeat left center ;
-        background-size: 388px 84px;
-        vertical-align: middle;
-        span{
+        background: #f2f2f2 url(../assets/customerTagSet/tagtitle.png) no-repeat
+          left center;
+        background-size: 388px 85px;
+        display: flex;
+        align-items: center;
+        .indextitle {
+          width: 80px;
+          height: 70px;
           font-size: 55px;
-          text-indent: 10px;
+          line-height: 70px;
+          text-align: center;
         }
-        .subtitle{
+        .texttitle {
           font-size: 32px;
+          height: 70px;
+          line-height: 70px;
         }
       }
     }
