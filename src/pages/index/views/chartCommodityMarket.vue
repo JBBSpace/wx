@@ -88,7 +88,7 @@ export default {
   methods: {
     initCompanyList() {
       const params = {
-        company_id: window.localStorage.getItem("company_id"),
+        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
         name:'st_company',
       };
       chartApi.initCompanyList({ params: { ...params } }).then(res => {
@@ -104,7 +104,7 @@ export default {
     },
     viewreportData() {
       const params = {
-        company_id:window.localStorage.getItem("company_id"),
+        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
         Datetype: this.curType,
         comid: this.company.id ? this.company.id : ""
       };

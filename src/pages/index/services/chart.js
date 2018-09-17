@@ -16,6 +16,14 @@ const settings = {
   viewreportDataCompare: {
     url: '/report/rep_compare/',
     method: 'get'
+  },
+  one: {
+    url: '/report/rep_xs_class/',
+    method: 'get'
+  },
+  two: {
+    url: '/report/rep_xs_com/',
+    method: 'get'
   }
 }
 

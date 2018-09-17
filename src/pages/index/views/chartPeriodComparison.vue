@@ -43,7 +43,7 @@
     <div class="echartHistogram">
       <p class="label">销售对比柱形图</p>
       <div class="scroll">
-        <ve-histogram :data="chartData" width="700px" :extend="extend" :settings="chartSettings02">
+        <ve-histogram :data="chartData" :extend="extend" :settings="chartSettings02">
           <div v-if="dataEmpty" class="data-empty">没有数据</div>
         </ve-histogram>
       </div>
@@ -124,7 +124,7 @@ export default {
   methods: {
     initCompanyList() {
       const params = {
-        company_id: window.localStorage.getItem("company_id"),
+        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
         name:'st_company',
       };
       chartApi.initCompanyList({ params: { ...params } }).then(res => {
@@ -140,7 +140,7 @@ export default {
     },
     initBrandList() {
       const params = {
-        company_id: window.localStorage.getItem("company_id"),
+        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
         name:'st_class',
       };
       createDiscountApi.getList({ params: { ...params } }).then(res => {
@@ -156,7 +156,7 @@ export default {
     },
     viewreportData() {
       const params = {
-        company_id:window.localStorage.getItem("company_id"),
+        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
         Datetype: this.curType,
         comid: this.company.id ? this.company.id : "",
         class_id: this.brand.classid ? this.brand.classid : ""

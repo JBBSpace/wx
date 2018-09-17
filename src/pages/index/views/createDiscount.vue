@@ -73,13 +73,6 @@ export default {
     }
   },
   methods: {
-    createQrcode() {
-      var canvas = document.getElementById("canvas");
-      QRCode.toCanvas(canvas, "" + this.url, function(error) {
-        if (error) console.error(error);
-      });
-      this.show = true;
-    },
     getList() {
       const params = {
         company_id: window.localStorage.getItem("company_id"),
@@ -109,7 +102,8 @@ export default {
     },
     postDiscountData(classObj) {
       const data = {
-        userid: util.getCookie("wx_userid"),
+        company_id: window.localStorage.getItem("company_id"),
+        wx_userid: util.getCookie("wx_userid"),
         type: this.formData.type
       };
       if (data.type == 0) {
@@ -122,7 +116,7 @@ export default {
           Toast(res.data.message);
         } else {
           const { barcode } = res.data.data;
-          window.location.href = `/static/userinfo/qrcode.html?barcode=${barcode}`;
+          window.location.href = `/qrcode.html?barcode=${barcode}`;
         }
       });
     },

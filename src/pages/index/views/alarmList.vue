@@ -4,52 +4,102 @@
     <img src="../assets/alarmClock.png">
   </div>
   <ul>
-    <li class="cell">
+    <li class="cell" v-for="item in alarmClockList" :key="item.id" @click="goSet(item)">
       <div class="left">
-        <p class="time">08:00</p>
-        <p class="name">公司销售表</p>
-        <p class="week">周一   周二   周三   周五   周六   周日</p>
+        <p class="time">{{item.send_time}}</p>
+        <p class="name">{{item.name}}</p>
+        <p class="week">{{item.weeks}}</p>
       </div>
       <div class="right">
-        <van-switch v-model="checked" />
-      </div>
-    </li>
-    <li class="cell">
-      <div class="left">
-        <p class="time">08:00</p>
-        <p class="name">公司销售表</p>
-        <p class="week">周一   周二   周三   周五   周六   周日</p>
-      </div>
-      <div class="right">
-        <van-switch v-model="checked" />
-      </div>
-    </li>
-    <li class="cell">
-      <div class="left">
-        <p class="time">08:00</p>
-        <p class="name">公司销售表</p>
-        <p class="week">周一   周二   周三   周五   周六   周日</p>
-      </div>
-      <div class="right">
-        <van-switch v-model="checked" />
+        <van-switch v-model="item.is_active"/>
       </div>
     </li>
   </ul>
 </div>
 </template>  
 <script>
+import util from "@/pages/index/helper/util";
+import alarmApi from "@/pages/index/services/alarm";
 export default {
   data() {
     return {
-      checked: true
+      alarmClockList: []
     };
   },
-  methods: {}
+  methods: {
+    init() {
+      const params = {
+        company_id: window.localStorage.getItem("company_id"),
+        wx_user_id: util.getCookie("wx_userid")
+      };
+      alarmApi.alarmtask({ params: params }).then(
+        res => {
+          const { data, status, message } = res.data;
+          if (status) {
+            this.$toast(message);
+          } else {
+            this.alarmClockList = data;
+          }
+        }
+      );
+    },
+    goSet(self) {
+      var e = e || window.event;
+      if (e.target.nodeName == "DIV") {
+        e.stopPropagation();
+        if (self.send_day.length) {
+          const data = {
+            company_id: window.localStorage.getItem("company_id"),
+            wx_user_id: util.getCookie("wx_userid"),
+            is_active: self.is_active,
+            muen_id: self.id
+          };
+          alarmApi.alarmSubmit({ data: data }).then(res => {
+            const { data, status, message } = res.data;
+            if (status) {
+              this.$toast(message);
+              self.is_active = !self.is_active;
+            }
+          });
+        } else {
+          this.$router.push({
+            name: "alarm",
+            query: {
+              id: self.id,
+              hours: "00",
+              minutes: "00",
+              week: JSON.stringify([])
+            }
+          });
+        }
+      } else {
+        this.$router.push({
+          name: "alarm",
+          query: {
+            id: self.id,
+            hours:
+              self.send_time == null || self.send_time == ""
+                ? "00"
+                : self.send_time.split(":")[0],
+            minutes:
+              self.send_time == null || self.send_time == ""
+                ? "00"
+                : self.send_time.split(":")[1],
+            week: JSON.stringify(self.send_day)
+          }
+        });
+      }
+    }
+  },
+  mounted() {
+    this.init();
+  }
 };
 </script>  
   
 <style lang="scss" scoped>
 .alarmClockList {
+  padding-bottom: 80px;
   .banner {
     width: 750px;
     height: 460px;

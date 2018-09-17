@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-06 10:41:56 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2018-08-31 15:25:54
+ * @Last Modified time: 2018-09-13 10:22:05
  */
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
@@ -95,6 +95,22 @@ router.beforeEach((to, from, next) => {
       break;
     case 'menuSet':
       document.title = "用户菜单配置";
+      next();
+      break;
+    case 'ele':
+      document.title = "闹着玩儿";
+      next();
+      break;
+      case 'one':
+      document.title = "商品类别销售";
+      next();
+      break;
+      case 'two':
+      document.title = "公司销售分析 ";
+      next();
+      break;
+      case 'msgList':
+      document.title = "消息列表";
       next();
       break;
     default:

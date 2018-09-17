@@ -1,28 +1,36 @@
 <template>  
   <div class="home" v-show="show">
-    <div class="logo">报表</div>
-    <div class="discount">
-      <div class="item" v-for="item in discount" :key="item.id" v-show="isShow(item.id)" @click="go(item.linkName)">
+    <div class="head">
+      <div class="a"></div>
+      <div class="b"></div>
+      <div class="c">
+        <div class="item" v-for="item in discount" :key="item.id" v-show="isShow(item.id)" @click="go(item.linkName)">
         <img :src="item.imgPath" alt="">
         <p>{{item.text}}</p>
+        </div>
       </div>
     </div>
-    <p class="title">我的订阅</p>
+    <p class="title">我的报表</p>
     <div class="mySubscibe">
       <div class="item" v-for="item in mySubscibe" :key="item.id" v-show="isShow(item.id)" @click="go(item.linkName)">
         <img :src="item.imgPath" alt="">
         <p>{{item.text}}</p>
       </div>
     </div>
-    <p class="title"></p>
+    <p class="title">我的操作</p>
     <div class="fnModule">
-      <div class="item" @click="scan">
+      <div class="item" @click="scan" v-show="isShow(8)">
         <p class="saoma"><van-icon name="saoyisao"/></p>
         <p>扫一扫</p>
       </div>
-      <div class="item" @click="menuset">
+      <div class="item" @click="go('menuSet')" v-show="isShow(9)">
         <img class="menuset" src="../assets/home/10.png" alt="">
         <p>用户菜单配置</p>
+      </div>
+      <div class="item" @click="go('msgList')" v-show="isShow(11)">
+        <span v-if="hasMsg"></span>
+        <img class="menuset" src="../assets/home/msg.png" alt="">
+        <p>消息</p>
       </div>
     </div>
   </div>
@@ -40,23 +48,29 @@ export default {
       shouldShow: [],
       discount: [
         {
-          imgPath: require("../assets/home/discount.png"),
+          imgPath: require("../assets/home/creatediscount.png"),
           text: "我的折扣券",
           linkName: "discountList",
           id: 1
         },
         {
-          imgPath: require("../assets/home/creatediscount.png"),
-          text: "生成 折扣券",
+          imgPath: require("../assets/home/discount.png"),
+          text: "生成折扣券",
           linkName: "createDiscount",
           id: 2
+        },
+        {
+          imgPath: require("../assets/home/alarm.png"),
+          text: "报表闹钟",
+          linkName: "alarmList",
+          id: 10
         }
       ],
       mySubscibe: [
         {
-          imgPath: require("../assets/home/a.png"),
-          text: "门店零售列表",
-          linkName: "",
+          imgPath: require("../assets/home/pie.png"),
+          text: "商品类别销售",
+          linkName: "one",
           id: 3
         },
         {
@@ -66,13 +80,13 @@ export default {
           id: 4
         },
         {
-          imgPath: require("../assets/home/c.png"),
-          text: "零售外区业绩柱图",
-          linkName: "",
+          imgPath: require("../assets/home/h.png"),
+          text: "公司销售分析",
+          linkName: "two",
           id: 5
         },
         {
-          imgPath: require("../assets/home/d.png"),
+          imgPath: require("../assets/home/g.png"),
           text: "公司销售表",
           linkName: "chartCompanyMarket",
           id: 6
@@ -84,18 +98,7 @@ export default {
           id: 7
         }
       ],
-      fnModule: [
-        {
-          imgPath: require("../assets/home/scan.png"),
-          text: "扫一扫",
-          id: 8
-        },
-        {
-          imgPath: require("../assets/home/scan.png"),
-          text: "用户菜单配置",
-          id: 9
-        }
-      ]
+      hasMsg: false
     };
   },
   methods: {
@@ -114,6 +117,14 @@ export default {
         homeApi.menus({ params: params }).then(res => {
           const { data } = res.data;
           this.shouldShow = data;
+        });
+        homeApi.hasMsg({ params: params }).then(res => {
+          const { status, message, data } = res.data;
+          if (status) {
+            this.$toast(message);
+          } else {
+            this.hasMsg = data.totalcount ? true : false;
+          }
         });
       } else {
         homeApi.check({ params: { company_id: company_id } }).then(res => {
@@ -138,7 +149,7 @@ export default {
     },
     scan: function() {
       const params = {
-        url: window.location.href.split('#')[0],
+        url: window.location.href.split("#")[0],
         company_id: window.localStorage.getItem("company_id")
       };
       const _this = this;
@@ -177,11 +188,6 @@ export default {
         });
       });
     },
-    menuset(){
-      this.$router.push({
-          name: 'menuSet'
-        });
-    }
   },
   mounted() {
     this.check();
@@ -191,19 +197,68 @@ export default {
   
 <style lang="scss" scoped>
 .home {
-  background: #e5e5e5;
-  .logo {
+  background: #f6f7f7;
+  .head {
     width: 750px;
-    height: 200px;
-    background: rgba(81, 184, 203, 1);
-    background-image: url("../assets/home/logo.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 120px 120px;
-    text-align: center;
-    line-height: 200px;
-    font-size: 34px;
-    color: rgba(255, 255, 255, 1);
+    height: 400px;
+    background: #f6f7f7;
+    position: relative;
+    .a {
+      width: 100%;
+      height: 240px;
+      background-image: url("../assets/home/bg.png");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .b {
+      width: 120px;
+      height: 120px;
+      border: 2px solid #fff; /*no*/
+      background: #6ac3ec;
+      background-image: url("../assets/home/logo.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 80px;
+      border-radius: 50%;
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      margin-left: -60px;
+      z-index: 2;
+      box-shadow: 0px 8px 10px #6ac3ec;
+    }
+    .c {
+      width: 690px;
+      height: 205px;
+      padding-top: 25px;
+      box-sizing: border-box;
+      border-radius: 30px;
+      background: #fff;
+      margin: 0 auto;
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      margin-left: -345px;
+      z-index: 1;
+      display: flex;
+      box-shadow: 0px 10px 8px #6ac3ec;
+      .item {
+        width: 33%;
+        height: 200px;
+        box-sizing: border-box;
+        text-align: center;
+        font-size: 26px;
+        color: #989898;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        img {
+          width: 60px;
+          height: 60px;
+          margin: 6px auto;
+        }
+      }
+    }
   }
   .discount {
     width: 750px;
@@ -211,25 +266,6 @@ export default {
     flex-wrap: wrap;
     justify-content: space-between;
     background: #ffffff;
-    .item {
-      width: 50%;
-      height: 250px;
-      box-sizing: border-box;
-      text-align: center;
-      font-size: 26px;
-      color: rgba(114, 113, 113, 1);
-      border-bottom: 1px solid #e5e5e5;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      img {
-        width: 104px;
-        margin: 6px auto;
-      }
-      &:nth-child(odd) {
-        border-right: 1px solid #e5e5e5;
-      }
-    }
   }
   .title {
     font-size: 30px;
@@ -252,11 +288,21 @@ export default {
       flex-direction: column;
       justify-content: center;
       box-sizing: border-box;
-      border-right: 1px solid #e5e5e5;
-      border-bottom: 1px solid #e5e5e5;
-      .saoma{
+      border-right: 1px solid #e1eeee;
+      border-bottom: 1px solid #e1eeee;
+      .saoma {
         font-size: 58px;
-        color:#43a636;
+        color: #43a636;
+      }
+      position: relative;
+      span {
+        width: 22px;
+        height: 22px;
+        border-radius: 100%;
+        position: absolute;
+        background: #ee5108;
+        right: 34%;
+        top: 25%;
       }
       img {
         width: 60px;

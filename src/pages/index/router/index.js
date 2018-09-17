@@ -63,5 +63,22 @@ export default new Router({
       name: 'menuSet',
       component: resolve => require(['@/pages/index/views/menuSet'], resolve)
     },
+    {
+      path: '/ele',
+      name: 'ele',
+      component: resolve => require(['@/pages/index/views/ele'], resolve)
+    },{
+      path: '/one',
+      name: 'one',
+      component: resolve => require(['@/pages/index/views/chartCommodityMarketOne'], resolve)
+    },{
+      path: '/two',
+      name: 'two',
+      component: resolve => require(['@/pages/index/views/chartCommodityMarketTwo'], resolve)
+    },{
+      path: '/msgList',
+      name: 'msgList',
+      component: resolve => require(['@/pages/index/views/msgList'], resolve)
+    },
   ]
 })

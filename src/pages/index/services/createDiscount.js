@@ -7,7 +7,7 @@ const settings = {
     method: 'get'
   },
   postDiscountData: {
-    url: '/userinfo/discount/',
+    url: '/retail/discountInfo/',
     method: 'post'
   }
 }

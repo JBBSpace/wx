@@ -11,102 +11,39 @@
           </van-cell>
         </van-cell-group>
     </div>
-    {{weeksChecked}}
+    <div class="btnBottom"><van-button type="primary" size="large" @click="setAlarm">设置完成</van-button></div>
   </div>
 </template>  
   
 <script>
-const time = [
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  16,
-  17,
-  18,
-  19,
-  20,
-  21,
-  22,
-  23,
-  24,
-  25,
-  26,
-  27,
-  28,
-  29,
-  30,
-  31,
-  32,
-  33,
-  34,
-  35,
-  36,
-  37,
-  38,
-  39,
-  40,
-  41,
-  42,
-  43,
-  44,
-  45,
-  46,
-  47,
-  48,
-  49,
-  50,
-  51,
-  52,
-  53,
-  54,
-  55,
-  56,
-  57,
-  58,
-  59,
-  60
-];
+import util from "@/pages/index/helper/util";
+import alarmApi from "@/pages/index/services/alarm";
+const time = ["00", "15", "30", "45"];
 const citys = {
-  上午: [
-    { 1: time },
-    { 2: time },
-    { 3: time },
-    { 4: time },
-    { 5: time },
-    { 6: time },
-    { 7: time },
-    { 8: time },
-    { 9: time },
-    { 10: time },
-    { 11: time },
-    { 12: time }
-  ],
-  下午: [
-    { 13: time },
-    { 14: time },
-    { 15: time },
-    { 16: time },
-    { 17: time },
-    { 18: time },
-    { 19: time },
-    { 20: time },
-    { 21: time },
-    { 22: time },
-    { 23: time },
-    { 24: time }
-  ]
+  "00": time,
+  "01": time,
+  "02": time,
+  "03": time,
+  "04": time,
+  "05": time,
+  "06": time,
+  "07": time,
+  "08": time,
+  "09": time,
+  "10": time,
+  "11": time,
+  "12": time,
+  "13": time,
+  "14": time,
+  "15": time,
+  "16": time,
+  "17": time,
+  "18": time,
+  "19": time,
+  "20": time,
+  "21": time,
+  "22": time,
+  "23": time
 };
 
 export default {
@@ -114,15 +51,63 @@ export default {
     return {
       columns: [
         {
-          values: Object.keys(citys),
-          className: "active"
+          values: [
+            "00",
+            "01",
+            "02",
+            "03",
+            "04",
+            "05",
+            "06",
+            "07",
+            "08",
+            "09",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23"
+          ],
+          className: "active",
+          defaultIndex: [
+            "00",
+            "01",
+            "02",
+            "03",
+            "04",
+            "05",
+            "06",
+            "07",
+            "08",
+            "09",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23"
+          ].indexOf(this.$route.query.hours)
         },
         {
-          values: Object.keys(citys["上午"]),
-          className: "active"
-        },
-        {
-          values: time
+          values: time,
+          defaultIndex: time.indexOf(this.$route.query.minutes)
         }
       ],
       weeks: [
@@ -155,19 +140,13 @@ export default {
           id: 7
         }
       ],
-      weeksChecked: []
+      hoursAndMinutes: [this.$route.query.hours,this.$route.query.minutes],
+      weeksChecked: JSON.parse(this.$route.query.week)
     };
   },
   methods: {
     onChange(picker, values) {
-      console.log(values);
-      const lv1 = values[0];
-      const lv2 = values[1];
-      const lv2Val = [];
-      citys[lv1].map((item, index) => {
-        lv2Val.push(JSON.parse(Object.keys(item)));
-      });
-      picker.setColumnValues(1, lv2Val);
+      this.hoursAndMinutes = values;
     },
     selectWeek(id) {
       var e = e || window.event;
@@ -179,13 +158,38 @@ export default {
           ? this.weeksChecked.splice(this.weeksChecked.indexOf(id), 1)
           : this.weeksChecked.push(id);
       }
+    },
+    setAlarm() {
+      if(this.weeksChecked.length == 0){
+        this.$toast('请选择星期几')
+        return 
+      }
+      const data = {
+        company_id: window.localStorage.getItem("company_id"),
+        wx_user_id: util.getCookie("wx_userid"),
+        is_active: true,
+        muen_id: this.$route.query.id,
+        send_time: this.hoursAndMinutes.join(":"),
+        send_day: this.weeksChecked
+      };
+      alarmApi.alarmSubmit({ data: data }).then(res => {
+        const { data, status, message } = res.data;
+        if (status) {
+          this.$toast(message);
+        } else {
+          this.$router.push({
+            name: "alarmList"
+          });
+        }
+      });
     }
-  }
+  },
 };
 </script>  
   
 <style lang="scss" scoped>
 .alarmClockSeting {
+  padding-bottom: 120px;
   .weeks {
     width: 700px;
     margin: 0 auto;
@@ -204,8 +208,8 @@ export default {
       z-index: 800;
       top: -2px;
       left: -2px;
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       line-height: 40px;
       text-align: center;
       color: white;
@@ -229,6 +233,14 @@ export default {
       color: #727171;
       padding: 20px;
     }
+  }
+  .btnBottom {
+    width: 100%;
+    height: 100px;
+    position: fixed;
+    z-index: 801;
+    bottom: 0;
+    left: 0;
   }
 }
 </style>  

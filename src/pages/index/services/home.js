@@ -9,6 +9,10 @@ const settings = {
   menus: {
     url: '/company/usermenulist/',
     method: 'get'
+  },
+  hasMsg: {
+    url: '/msg/newmsg/',
+    method: 'get'
   }
 }
 

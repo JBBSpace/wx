@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-12 13:26:04 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2018-08-21 13:19:28
+ * @Last Modified time: 2018-09-06 09:45:13
  */
 <template>
   <div>
@@ -68,7 +68,8 @@ export default {
     getTable() {
       const params = {
         count: this.list.length + 1,
-        userid: util.getCookie("wx_userid")
+        wx_userid: util.getCookie("wx_userid"),
+        company_id: window.localStorage.getItem("company_id")
       };
       discountListApi.getTable({ params: { ...params } }).then(
         res => {
@@ -81,7 +82,7 @@ export default {
             }
           } else if (res.data.status == 5) {
             this.$router.push({
-              name: 'login'
+              name: "login"
             });
           } else {
             this.$toast(message);
@@ -99,7 +100,9 @@ export default {
       discountListApi
         .invalid({
           data: {
-            id
+            id,
+            company_id: window.localStorage.getItem("company_id"),
+            wx_userid: util.getCookie("wx_userid")
           }
         })
         .then(

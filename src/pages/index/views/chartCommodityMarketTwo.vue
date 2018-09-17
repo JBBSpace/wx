@@ -1,0 +1,178 @@
+<template>
+  <div class="echart">
+    <div class="echartType">
+      <span class="label">报表类型：</span><span v-for="item in echartTypeList" :class="[{ active: isActive(item.type) }, 'item']" :key="item.type" @click="toggleType(item.type)">{{item.text}}</span>
+    </div>
+    <div class="echartPie">
+      <p class="label">饼形报表展示</p>
+      <ve-histogram :data="chartData">
+        <div v-if="dataEmpty" class="data-empty">没有数据</div>
+      </ve-histogram>
+      <p class="theme"><span></span>饼形统计报表</p>
+    </div>
+  </div>
+</template>
+
+<script>
+import chartApi from "@/pages/index/services/chart";
+export default {
+  data: function() {
+    this.chartSettings = {
+      radius: 80,
+      offsetY: 290,
+      label: {
+        fontSize: 8,
+        formatter: '{b}:{d}%'
+      }
+    };
+    return {
+      curType: "2",
+      echartTypeList: [
+        {
+          text: "日报",
+          type: "0"
+        },
+        {
+          text: "月报",
+          type: "2"
+        },
+        {
+          text: "年报",
+          type: "3"
+        }
+      ],
+      chartData: {
+        columns: ["comname", "money"],
+        rows: []
+      },
+      dataEmpty: true
+    };
+  },
+  methods: {
+    viewreportData() {
+      const params = {
+        Datetype: this.curType,
+        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
+        comid:1,
+      };
+      chartApi.two({ params: params }).then(res => {
+        const { status, message, data } = res.data;
+        this.dataEmpty = true;
+        if (status == 0) {
+          const lng = data.length;
+          if (lng > 0 && lng <= 5) {
+            this.chartSettings.offsetY = 160;
+          } else if (lng > 5 && lng <= 10) {
+            this.chartSettings.offsetY = 230;
+          } else if (lng > 10 && lng <= 20) {
+            this.chartSettings.offsetY = 300;
+          } else {
+            this.chartSettings.offsetY = 320;
+          }
+          if(lng > 0){
+            this.dataEmpty = false;
+          }
+          this.chartData.rows = data;
+        } else {
+          this.$toast(message);
+        }
+      });
+    },
+    isActive(isActive) {
+      return this.curType === isActive;
+    },
+    toggleType(type) {
+      this.curType = type;
+      this.viewreportData();
+    },
+  },
+  mounted() {
+    this.viewreportData();
+  }
+};
+</script>
+<style lang="scss">
+.van-picker__toolbar {
+  font-size: 32px;
+  color: #666;
+}
+.echart {
+  padding: 60px 25px;
+  .companyName,
+  .echartType {
+    height: 68px;
+    line-height: 68px;
+    .label {
+      font-size: 30px;
+      vertical-align: middle;
+    }
+    .text {
+      display: inline-block;
+      vertical-align: middle;
+      width: 481px;
+      height: 68px;
+      border: 1px solid #727171;/*no*/
+      border-radius: 8px;
+      color: #727171;
+      font-size: 26px;
+      padding-left: 16px;
+      box-sizing: border-box;
+      background: url("../assets/select.png") no-repeat 430px center;
+    }
+    .item {
+      display: inline-block;
+      width: 98px;
+      height: 56px;
+      border: 1px solid #727171;/*no*/
+      border-radius: 6px;
+      margin-right: 30px;
+      font-size: 28px;
+      color: #727171;
+      text-align: center;
+      line-height: 56px;
+      vertical-align: middle;
+      &.active {
+        background-color: #51b8cb;
+        border: 1px solid #51b8cb;/*no*/
+        color: white;
+      }
+    }
+  }
+  .echartType {
+    margin: 50px 0;
+  }
+  .echartPie,
+  .echartHistogram {
+    .label {
+      font-size: 30px;
+      padding-left: 50px;
+      margin-bottom: 30px;
+    }
+    .theme {
+      text-align: center;
+      font-size: 28px;
+    }
+  }
+  .echartPie .label {
+    background: url("../assets/pie.png") no-repeat left center;
+    background-size: 40px 40px;
+  }
+  .echartHistogram .label {
+    background: url("../assets/zhu.png") no-repeat left center;
+    background-size: 40px 40px;
+  }
+  .data-empty {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #888;
+    font-size: 28px;
+  }
+}
+</style>  

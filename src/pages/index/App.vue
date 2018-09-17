@@ -29,7 +29,7 @@ body {
 }
 #app {
   width: 750px;
-  overflow: hidden;
+  height: 100%;
   margin: 0 auto;
   /* background: #F2F2F2; */
   #loading {

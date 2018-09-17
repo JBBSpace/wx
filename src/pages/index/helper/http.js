@@ -12,7 +12,7 @@ import store from '../store/index'
 const instance = Axios.create({
   baseURL: util.apiServer,
   url: '',
-  timeout: 20000,
+  timeout: 10000,
   responseType: 'json',
   withCredentials: true,
   intercept: 'all' // 拦截器选项,all:then和catch均通过拦截器,resolve:只有then通过拦截器,reject:只有catch通过拦截器,none:then和catch均不通过拦截器

@@ -26,13 +26,10 @@
           </div>
           <div class="list">
             <div class="userItem" v-for="(item) in menus" :key="item.id" @click="selectMenu(item.id)">
-              <div class="name"><span :class="[menusChecked.includes(item.id) ? 'active' : '']"><van-icon :name="item.icon"/> {{item.title}}</span></div>
+              <div class="name">
+                <span :class="[menusChecked.includes(item.id) ? 'active' : '']">
+                {{item.title}}</span></div>
               <div><input type="checkbox" :id="item.id" :value="item.id" v-model="menusChecked">
-              </div>
-            </div>
-            <div class="userItem disChecked" v-for="(item) in mustMenus" :key="item.id">
-              <div class="name"><span :class="[menusChecked.includes(item.id) ? 'active' : '']"><van-icon :name="item.icon"/> {{item.title}}</span></div>
-              <div><input disabled type="checkbox" :id="item.id" :value="item.id" v-model="menusChecked">
               </div>
             </div>
           </div>
@@ -50,75 +47,44 @@ import util from "@/pages/index/helper/util";
 export default {
   data() {
     return {
-      users: [
-        {
-          name: "用户1",
-          wx_user_id: 100,
-          hg_user_id: 1
-        },
-        {
-          name: "用户2",
-          wx_user_id: 101,
-          hg_user_id: 2
-        },
-        {
-          name: "用户3",
-          wx_user_id: 102,
-          hg_user_id: 3
-        },
-        {
-          name: "用户4",
-          wx_user_id: 103,
-          hg_user_id: 4
-        },
-        {
-          name: "用户5",
-          wx_user_id: 104,
-          hg_user_id: 5
-        },
-        {
-          name: "用户6",
-          wx_user_id: 105,
-          hg_user_id: 6
-        }
-      ],
+      users: [],
       usersChecked: [],
       show: false,
       menus: [
         {
           title: "我的折扣券",
-          id: 1,
-          icon: "zhekouqia"
+          id: 1
         },
         {
           title: "生成 折扣券",
-          id: 2,
-          icon: "zhekouquan"
+          id: 2
+        },
+        {
+          title: "商品类别销售",
+          id: 3
         },
         {
           title: "周期销售表",
-          id: 4,
-          icon: "liebiao"
+          id: 4
+        },
+        {
+          title: "公司销售分析",
+          id: 5
         },
         {
           title: "公司销售表",
-          id: 6,
-          icon: "jpcompany"
+          id: 6
         },
         {
           title: "类别销售对比表",
-          id: 7,
-          icon: "zhuzhuangtu1"
+          id: 7
+        },
+        {
+          title: "报表闹钟",
+          id: 10
         }
       ],
-      menusChecked: [8],
-      mustMenus: [
-        {
-          title: "扫一扫",
-          id: 8,
-          icon: "saoyisao2"
-        }
-      ]
+      menusChecked: []
     };
   },
   computed: {
@@ -157,7 +123,7 @@ export default {
     selectUser(id) {
       var e = e || window.event;
       if (e.target.nodeName == "INPUT") {
-        e.cancelBubble = true; 
+        e.cancelBubble = true;
         e.stopPropagation();
       } else {
         this.usersChecked.includes(id)
@@ -168,7 +134,7 @@ export default {
     selectMenu(id) {
       var e = e || window.event;
       if (e.target.nodeName == "INPUT") {
-        e.cancelBubble = true; 
+        e.cancelBubble = true;
         e.stopPropagation();
       } else {
         this.menusChecked.includes(id)
@@ -261,10 +227,6 @@ export default {
         display: flex;
         justify-content: space-around;
         border-bottom: 1px solid #e6dede;
-        &.disChecked {
-          background: #e6dede;
-          opacity: 0.5;
-        }
         .name {
           flex-grow: 2;
           color: #696161;
