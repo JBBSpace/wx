@@ -24,6 +24,14 @@ const settings = {
   two: {
     url: '/report/rep_xs_com/',
     method: 'get'
+  },
+  viewreportDataStoreSales: {
+    url: '/report/rep_shop/',
+    method: 'get'
+  },
+  rep_week_com:{
+    url: '/report/rep_week_com/',
+    method: 'get'
   }
 }
 

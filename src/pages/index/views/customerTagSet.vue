@@ -1,19 +1,23 @@
-<template>  
-<div class="customerTagSet">
-  <div class="classify" v-for="(lev1,index) in classify" :key="lev1.label_id">
-    <div class="title">
-      <p class="titlebg">
-        <span class="indextitle">{{(index<10)?'0'+Number(index+1):''+Number(index+1)}}</span>
-        <span class="texttitle">{{lev1.label_name}}</span>
-      </p>
+<template>
+  <div class="customerTagSet">
+    <div class="classify" v-for="(lev1,index) in classify" :key="lev1.label_id">
+      <div class="title">
+        <p class="titlebg">
+          <span class="indextitle">{{(index<10)?'0'+Number(index+1):''+Number(index+1)}}</span>
+          <span class="texttitle">{{lev1.label_name}}</span>
+        </p>
+      </div>
+      <div class="tags">
+        <span
+          v-for="tag in lev1.label_item_list"
+          :class="[tag.label_item_selected ? 'active' : '', 'tag']"
+          :key="tag.label_item_id"
+          @click="toggleTag(lev1.label_item_list,tag.label_item_id)"
+        >{{tag.label_item_name}}</span>
+      </div>
     </div>
-    <div class="tags">
-      <span v-for="tag in lev1.label_item_list" :class="[tag.label_item_selected ? 'active' : '', 'tag']" 
-      :key="tag.label_item_id" @click="toggleTag(lev1.label_item_list,tag.label_item_id)">{{tag.label_item_name}}</span>
-    </div>
+    <div class="submitbtn" v-show="!msg_read" @click="submit">提交</div>
   </div>
-  <div class="submitbtn" @click="submit">提交</div>
-</div>
 </template>  
   
 <script>
@@ -22,18 +26,23 @@ import "../assets/style/iconfont.css";
 export default {
   data() {
     return {
-      classify: []
+      classify: [],
+      msg_read:false
     };
   },
   methods: {
     init() {
       customerTagSetApi
         .labelList({
-          url: `/retail/lableinfo/${this.$route.query.id}/`
+          url: `/retail/lableinfo/${this.$route.query.id}`,
+          params: {
+            msg_id: this.$route.query.msg_id,
+          }
         })
         .then(res => {
           const { data } = res.data;
-          this.classify = data;
+          this.classify = data.tag_ls;
+          this.msg_read= data.msg_read
         });
     },
     toggleTag(tags, id) {
@@ -63,17 +72,22 @@ export default {
       });
       const data = {
         id: this.$route.query.id,
+        msg_id: this.$route.query.msg_id,
         label_list: label_list
       };
       customerTagSetApi.setClientLabel({ data: data }).then(res => {
-        const { message } = res.data;
-        this.$dialog
-          .alert({
-            message: "提交成功"
-          })
-          .then(() => {
-            history.back();
-          });
+        const { message, status } = res.data;
+        if (status) {
+          this.$toast(message);
+        } else {
+          this.$dialog
+            .alert({
+              message: "提交成功"
+            })
+            .then(() => {
+              history.back();
+            });
+        }
       });
     }
   },
@@ -89,7 +103,6 @@ export default {
   .classify {
     .title {
       background-color: #f2f2f2;
-      padding: 25px 0 10px 0;
       font-size: 32px;
       color: #fff;
       .titlebg {

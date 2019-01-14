@@ -1,21 +1,27 @@
-<template>  
-<div class="msgList">
-  <van-list
-  v-model="loading"
-  :finished="finished"
-  @load="onLoad"
->
-  <div class="item" v-for="item in list" :key="item.id" @click="go(item.msg_url)">
-    <div class="title">{{item.tag}}</div>
-    <div class="time">{{item.msg_time}}</div>
-    <div class="name">{{item.msg_content}}</div>
-    <div class="more"><span>更多</span><van-icon name="arrow" /></div>
+<template>
+  <div class="msgList">
+    <van-list v-model="loading" :finished="finished" @load="onLoad">
+      <div class="item" v-for="item in list" :key="item.id" @click="go(item)">
+        <div class="title">{{item.tag}}</div>
+        <div class="time">{{item.msg_time}}</div>
+        <div class="name">
+          <span v-for="(item,index) in newline(item.msg_content)" :key="index">
+            {{item}}
+            <br>
+          </span>
+        </div>
+        <span v-if="item.type != 0">
+          <span :class="[item.is_read ? '':'active', 'tag']"></span>
+          <div class="more">
+            <span>更多</span>
+            <van-icon name="arrow"/>
+          </div>
+        </span>
+      </div>
+    </van-list>
   </div>
-</van-list>
-</div>
 </template>  
 <script>
-import util from "@/pages/index/helper/util";
 import msgListApi from "@/pages/index/services/msgList";
 export default {
   data() {
@@ -27,10 +33,18 @@ export default {
     };
   },
   methods: {
+    newline: function(value) {
+      let newlineArr = [];
+      if (value.indexOf("###") > 0) {
+        newlineArr = value.split("###");
+      } else {
+        newlineArr[0] = value;
+      }
+      return newlineArr;
+    },
     onLoad() {
       const params = {
         company_id: window.localStorage.getItem("company_id"),
-        wx_user_id: util.getCookie("wx_userid"),
         page: this.page
       };
       msgListApi.msgList({ params: params }).then(res => {
@@ -38,7 +52,7 @@ export default {
         if (status) {
           this.$toast(message);
         } else {
-          this.page ++;
+          this.page++;
           this.list = this.list.concat(data.datas);
           this.loading = false;
           if (this.list.length >= data.totalcount) {
@@ -47,10 +61,10 @@ export default {
         }
       });
     },
-    go(url){
-      if (url) {
+    go(item) {
+      if (item.type) {
         this.$router.push({
-          path: url.split('#')[1]
+          path: item.msg_url.split("#")[1]
         });
       }
     }
@@ -74,6 +88,8 @@ export default {
     border: 1px solid rgb(235, 230, 230); /*no*/
     border-radius: 26px;
     box-shadow: 0px 13px 10px rgb(235, 230, 230);
+    position: relative;
+    overflow: hidden;
     .title {
       font-size: 32px;
       font-weight: 800;
@@ -86,10 +102,26 @@ export default {
     .name {
       padding-top: 20px;
       font-size: 28px;
-      color: rgb(238, 81, 8);
+      color: #ee5108;
       padding-bottom: 25px;
-      border-bottom: 1px solid rgb(235, 230, 230); /*no*/
     }
+    .tag {
+      width: 100px;
+      height: 100px;
+      // border-radius: 30%;
+      background: rgb(235, 230, 230);
+      position: absolute;
+      right: -50px;
+      top: -50px;
+      transform: rotate(45deg);
+      -moz-transform: rotate(45deg); /* Firefox */
+      -webkit-transform: rotate(45deg); /* Safari 和 Chrome */
+      -o-transform: rotate(7deg); /* Opera */
+    }
+    .active {
+      background: #ee5108;
+    }
+
     .more {
       font-size: 28px;
       color: #999;
@@ -97,6 +129,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-top: 1px solid rgb(235, 230, 230); /*no*/
       .van-icon {
         font-size: 32px;
       }

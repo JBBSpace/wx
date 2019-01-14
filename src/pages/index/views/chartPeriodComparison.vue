@@ -1,75 +1,93 @@
 <template>
-  <div class="echart">
-    <div class="companyName">
-      <span class="label">公司名称：</span><span class="text" @click="selectCompany">{{company.name}}</span>
+  <div class="chart-period-comparison">
+    <div class="company-name">
+      <span class="label">公司名称：</span>
+      <span class="select-text" @click="popupShow = !popupShow">{{companyInfo.name}}</span>
     </div>
-    <div class="companyName brandName">
-      <span class="label">商品类别：</span><span class="text" @click="selectBrand">{{brand.name}}</span>
+    <div class="company-name">
+      <span class="label">商品类别：</span>
+      <span class="select-text" @click="popupShow02 = !popupShow02">{{brandInfo.name}}</span>
     </div>
-    <div class="echartType">
-      <span class="label">报表类型：</span><span v-for="item in echartTypeList" :class="[{ active: isActive(item.type) }, 'item']" :key="item.type" @click="toggleType(item.type)">{{item.text}}</span>
+    <div class="echart-type">
+      <van-collapse v-model="activeNames" accordion>
+        <van-collapse-item title="报表类型：" :name="1" :border="false">
+          <div class="info">
+            <span
+              v-for="item in echartTypeList"
+              :class="[{ active: isActive(item.type) }, 'item']"
+              :key="item.type"
+              @click="toggleType(item.type)"
+            >{{item.text}}</span>
+          </div>
+        </van-collapse-item>
+      </van-collapse>
     </div>
-    <div class="echartPie">
-      <p class="label">销售对比表格</p>
-      <div class="scroll">
-      <table>
-        <thead class="fixedThead">
-          <tr>
-            <th class="th1">
-              <p class="right">销售对比 </p>
-              <div class="line"></div>
-              <p class="left">公司名称</p>
-            </th>
-            <th class="th_odd">本期</th>
-            <th class="th_even">上期</th>
-            <th class="th_odd">环比<br/> 上升</th>
-            <th class="th_even"> 上年<br/> 同期 </th>
-            <th class="th_odd">环比<br/>上升</th>
-          </tr>
-        </thead>
-        <tbody class="scrollTbody">
-          <tr v-for="item in tableData" :key="item.id">
-            <td class="td1">{{item.com_name}}</td>
-            <td class="td2">{{item.Thisperiod}}</td>
-            <td class="td3">{{item.lastperiod}}</td>
-            <td class="td4">{{item.Ringrise}}%</td>
-            <td class="td3">{{item.periodlastyear}}</td>
-            <td class="td4">{{item.lastRingrise}}%</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="table">
+      <p class="chart-label">销售对比表格</p>
+      <div class="scroll-x">
+        <table>
+          <thead>
+            <tr>
+              <th class="th1">
+                <p class="right">销售对比</p>
+                <div class="line"></div>
+                <p class="left">公司名称</p>
+              </th>
+              <th>本期</th>
+              <th>上期</th>
+              <th>环比
+                <br>上升
+              </th>
+              <th>上年
+                <br>同期
+              </th>
+              <th>环比
+                <br>上升
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in tableData" :key="item.id">
+              <td class="td1">{{item.com_name}}</td>
+              <td class="td2">{{item.Thisperiod}}</td>
+              <td class="td3">{{item.lastperiod}}</td>
+              <td class="td4">{{item.Ringrise}}%</td>
+              <td class="td3">{{item.periodlastyear}}</td>
+              <td class="td4">{{item.lastRingrise}}%</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <div class="echartHistogram">
-      <p class="label">销售对比柱形图</p>
-      <div class="scroll">
-        <ve-histogram :data="chartData" :extend="extend" :settings="chartSettings02">
-          <div v-if="dataEmpty" class="data-empty">没有数据</div>
-        </ve-histogram>
-      </div>
+      <p class="chart-label">销售对比柱形图</p>
+      <ve-histogram :data="chartData" :extend="extend" :settings="chartSettings">
+        <div v-if="dataEmpty" class="data-empty">查询成功 暂无数据</div>
+      </ve-histogram>
     </div>
-    <van-popup v-model="show" position="bottom">
+    <van-popup v-model="popupShow" position="bottom">
       <van-picker
         show-toolbar
         value-key="name"
-        :columns="columns"
-        @cancel="onCancel"
+        :columns="companyList"
+        @cancel="popupShow = !popupShow"
         @confirm="onConfirm"
       />
     </van-popup>
-    <van-popup v-model="showClass" position="bottom">
+    <van-popup v-model="popupShow02" position="bottom">
       <van-picker
         show-toolbar
         value-key="name"
-        :columns="columnsClass"
-        @cancel="onCancel"
-        @confirm="onConfirmClass"
+        :columns="brandList"
+        @cancel="popupShow02 = !popupShow02"
+        @confirm="onConfirmBrand"
       />
     </van-popup>
   </div>
 </template>
 
 <script>
+import util from "@/pages/index/helper/util";
 import createDiscountApi from "@/pages/index/services/createDiscount";
 import chartApi from "@/pages/index/services/chart";
 export default {
@@ -77,24 +95,21 @@ export default {
     this.extend = {
       "xAxis.0.axisLabel.rotate": 90
     };
-    this.chartSettings02 = {
+    this.chartSettings = {
       labelMap: {
         Thisperiod: "本期",
         lastperiod: "同期",
-        periodlastyear:"上年同期"
-      },
-      label: {
-        fontSize: 8
+        periodlastyear: "上年同期"
       }
     };
     return {
-      show: false,
-      showClass: false,
-      company: {},
-      brand: {},
-      columns: [],
-      columnsClass: [],
-      curType: "2",
+      popupShow: false,
+      popupShow02: false,
+      companyInfo: { id: "", name: "请选择公司名称", code: "" },
+      brandInfo: { classid: "", name: "请选择商品类别" },
+      companyList: [],
+      brandList: [],
+      curType: "0",
       echartTypeList: [
         {
           text: "日报",
@@ -109,10 +124,19 @@ export default {
           type: "2"
         },
         {
-          text: "年报",
+          text: "季度报",
           type: "3"
+        },
+        {
+          text: "半年报",
+          type: "4"
+        },
+        {
+          text: "年报",
+          type: "5"
         }
       ],
+      activeNames: 1,
       tableData: [],
       chartData: {
         columns: ["com_name", "Thisperiod", "lastperiod", "periodlastyear"],
@@ -124,62 +148,60 @@ export default {
   methods: {
     initCompanyList() {
       const params = {
-        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
-        name:'st_company',
+        company_id: localStorage.getItem("company_id"),
+        name: "st_company"
       };
-      chartApi.initCompanyList({ params: { ...params } }).then(res => {
+      chartApi.initCompanyList({ params: params }).then(res => {
         const { status, message, data } = res.data;
-        if (status == 0) {
-          this.columns = data;
-          this.company = data[0] ? data[0] : "请选择公司名称";
-          this.initBrandList();
-        } else {
+        if (status) {
           this.$toast(message);
+        } else {
+          this.companyList = data;
+          this.companyInfo = data[0]
+            ? data[0]
+            : { id: "", name: "公司列表获取出错", code: "" };
+          this.initBrandList();
         }
       });
     },
     initBrandList() {
       const params = {
-        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
-        name:'st_class',
+        company_id: localStorage.getItem("company_id"),
+        name: "st_class"
       };
-      createDiscountApi.getList({ params: { ...params } }).then(res => {
+      createDiscountApi.rules({ params: params }).then(res => {
         const { status, message, data } = res.data;
-        if (status == 0) {
-          this.columnsClass = data;
-          this.brand = data[0] ? data[0] : "请选择品牌名称";
-          this.viewreportData();
-        } else {
+        if (status) {
           this.$toast(message);
+        } else {
+          this.brandList = data;
+          this.brandInfo = data[0]
+            ? data[0]
+            : { classid: "", name: "商品类别获取出错" };
+          this.viewreportData();
         }
       });
     },
     viewreportData() {
       const params = {
-        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
+        company_id: localStorage.getItem("company_id"),
         Datetype: this.curType,
-        comid: this.company.id ? this.company.id : "",
-        class_id: this.brand.classid ? this.brand.classid : ""
+        comid: this.companyInfo.id ? this.companyInfo.id : "",
+        class_id: this.brandInfo.classid ? this.brandInfo.classid : ""
       };
       chartApi.viewreportDataCompare({ params: params }).then(res => {
         const { status, message, data } = res.data;
         this.dataEmpty = true;
-        if (status == 0) {
-          this.tableData = data;
-          if(data.length > 0){
-            this.dataEmpty = false;
-            this.chartData.rows = data;
-          }
-        } else {
+        if (status) {
           this.$toast(message);
+        } else {
+          this.tableData = data;
+          if (data.length > 0) {
+            this.dataEmpty = false;
+          }
+          this.chartData.rows = data;
         }
       });
-    },
-    selectCompany() {
-      this.show = !this.show;
-    },
-    selectBrand() {
-      this.showClass = !this.showClass;
     },
     isActive(isActive) {
       return this.curType === isActive;
@@ -189,18 +211,14 @@ export default {
       this.viewreportData();
     },
     onConfirm(value, index) {
-      this.company = value;
-      this.show = !this.show;
-      this.viewreportData();
+      this.companyInfo = value;
+      this.popupShow = !this.popupShow;
+      this.initBrandList();
     },
-    onConfirmClass(value, index) {
-      this.brand = value;
-      this.showClass = !this.showClass;
+    onConfirmBrand(value, index) {
+      this.brandInfo = value;
+      this.popupShow02 = !this.popupShow02;
       this.viewreportData();
-    },
-    onCancel() {
-      this.show = false;
-      this.showClass = false;
     }
   },
   mounted() {
@@ -208,173 +226,154 @@ export default {
   }
 };
 </script>
-<style lang="scss">
-.van-picker__toolbar {
-  font-size: 32px;
-  color: #666;
+<style lang="scss" scoped>
+.chart-period-comparison {
+  padding: 30px 20px 0 20px;
+  .label {
+    font-size: 30px;
+  }
+  .company-name {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    .select-text {
+      width: 480px;
+      font-size: 26px;
+      line-height: 68px;
+      color: #727171;
+      border: 1px solid #ebedf0; /*no*/
+      border-radius: 8px;
+      padding-left: 20px;
+      background: url("../assets/select.png") no-repeat 440px center;
+    }
+  }
+  .echart-type {
+    .info {
+      font-size: 0;
+      .item {
+        display: inline-block;
+        width: 98px;
+        line-height: 56px;
+        border: 1px solid #ebedf0; /*no*/
+        border-radius: 6px;
+        margin: 0 10px 6px 0;
+        font-size: 26px;
+        color: #727171;
+        text-align: center;
+        &.active {
+          background-color: #51b8cb;
+          border: 1px solid #51b8cb; /*no*/
+          color: white;
+        }
+      }
+    }
+  }
 }
-.echart {
-  padding: 60px 25px;
-  .scroll {
+  .table {
+    .chart-label {
+      font-size: 30px;
+      padding-left: 50px;
+      line-height: 80px;
+      background: url("../assets/table.png") no-repeat left center;
+      background-size: 40px 40px;
+    }
+    .scroll-x {
+      width: 100%;
+      overflow-x: scroll;
+      table {
+        border: 1px solid #ebedf0; /*no*/
+        border-collapse: collapse;
+        width: 120%;
+        font-size: 28px;
+      }
+      .th1 {
+        width: 150px;
+        min-width: 150px;
+        height: 80px;
+        position: relative;
+        overflow: hidden;
+        font-size: 24px;
+        background: rgba(114, 113, 113, 0.2); /*no*/
+        .right {
+          height: 40px;
+          text-align: right;
+          padding-right: 4px;
+        }
+        .left {
+          text-align: left;
+          text-indent: 6px;
+        }
+        .line {
+          position: absolute;
+          top: 60%;
+          left: -20%;
+          width: 300px;
+          height: 0;
+          border-top: 1px solid #ebedf0; /*no*/
+          transform: rotate(28deg);
+          -moz-transform: rotate(28deg); /* Firefox */
+          -webkit-transform: rotate(28deg); /* Safari 和 Chrome */
+        }
+      }
+      th:nth-child(odd) {
+        background: rgba(114, 113, 113, 0.2);
+      }
+      th:nth-child(n + 2) {
+        width: 108px;
+        height: 100px;
+      }
+      th,
+      td {
+        text-align: center;
+        border: 1px solid #ebedf0; /*no*/
+      }
+      td {
+        width: 108px;
+        font-size: 24px;
+        padding: 28px 0;
+        &.td1 {
+          color: #666;
+          text-align: left;
+        }
+        &.td2 {
+          color: #0e52b9;
+        }
+        &.td3 {
+          color: #db6d01;
+        }
+        &.td4 {
+          color: #129105;
+        }
+        &:nth-child(n + 2) {
+          text-align: right;
+        }
+      }
+    }
+  }
+  .echartHistogram {
+    padding: 20px 0;
     width: 100%;
-    overflow-x: scroll;
-    table {
-      border: 1px solid #ccc; /*no*/
-      border-collapse: collapse;
-      width: 120%;
+    .chart-label {
+      font-size: 30px;
+      padding-left: 50px;
+      line-height: 80px;
+      background: url("../assets/compare.png") no-repeat left center;
+      background-size: 40px 40px;
+    }
+    .data-empty {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.7);
+      color: #888;
       font-size: 28px;
-      // .fixedThead {
-      //   display: block;
-      //   width: 100%;
-      // }
-      // .scrollTbody {
-      //   display: block;
-      //   height: 550px;
-      //   overflow: auto;
-      //   width: 100%;
-      // }
-    }
-    .th1 {
-      width: 150px;
-      min-width: 150px;
-      height: 80px;
-      position: relative;
-      overflow: hidden;
-      font-size: 24px;
-      background: rgba(114, 113, 113, 0.2); /*no*/
-      .right {
-        height: 40px;
-        line-height: 30px;
-        text-align: right;
-        padding-right: 4px;
-      }
-      .left {
-        text-align: left;
-        padding-top: 10px;
-        text-indent: 6px;
-      }
-      .line {
-        position: absolute;
-        top: 60%;
-        left: -20%;
-        width: 280px;
-        height: 0;
-        border-top: 1px solid #ccc; /*no*/
-        transform: rotate(30deg);
-        -moz-transform: rotate(30deg); /* Firefox */
-        -webkit-transform: rotate(29deg); /* Safari 和 Chrome */
-      }
-    }
-    .th_even,
-    .th_odd {
-      width: 108px;
-      height: 100px;
-    }
-    .th_even {
-      background: rgba(114, 113, 113, 0.2);
-    }
-    th,
-    td {
-      text-align: center;
-      border: 1px solid #ccc; /*no*/
-    }
-    td {
-      width: 108px;
-      font-size: 24px;
-      padding: 28px 0;
-    }
-    .td1 {
-      color: #666;
-    }
-    .td2 {
-      color: #0e52b9;
-    }
-    .td3 {
-      color: #db6d01;
-    }
-    .td4 {
-      color: #129105;
     }
   }
 
-  .companyName,
-  .echartType {
-    height: 68px;
-    line-height: 68px;
-    .label {
-      font-size: 30px;
-      vertical-align: middle;
-    }
-    .text {
-      display: inline-block;
-      vertical-align: middle;
-      width: 481px;
-      height: 68px;
-      border: 1px solid #727171; /*no*/
-      border-radius: 8px;
-      color: #727171;
-      font-size: 26px;
-      padding-left: 16px;
-      box-sizing: border-box;
-      background: url("../assets/select.png") no-repeat 430px center;
-    }
-    .item {
-      display: inline-block;
-      width: 98px;
-      height: 56px;
-      border: 1px solid #727171; /*no*/
-      border-radius: 6px;
-      margin-right: 30px;
-      font-size: 28px;
-      color: #727171;
-      text-align: center;
-      line-height: 56px;
-      vertical-align: middle;
-      &.active {
-        background-color: #51b8cb;
-        border: 1px solid #51b8cb; /*no*/
-        color: white;
-      }
-    }
-  }
-  .brandName {
-    padding-top: 40px;
-  }
-  .echartType {
-    margin: 50px 0;
-  }
-  .echartPie,
-  .echartHistogram {
-    .label {
-      font-size: 30px;
-      padding-left: 50px;
-      margin-bottom: 30px;
-    }
-  }
-  .echartHistogram {
-    width: 750px;
-    padding-top: 30px;
-  }
-  .echartPie .label {
-    background: url("../assets/table.png") no-repeat left center;
-    background-size: 40px 40px;
-  }
-  .echartHistogram .label {
-    background: url("../assets/compare.png") no-repeat left center;
-    background-size: 40px 40px;
-  }
-  .data-empty {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.7);
-    color: #888;
-    font-size: 28px;
-  }
-}
+  
 </style>  

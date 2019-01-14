@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-06 10:41:56 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2018-09-13 10:22:05
+ * @Last Modified time: 2019-01-10 13:10:23
  */
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
@@ -31,19 +31,22 @@ import {
   Checkbox,
   CheckboxGroup,
   Icon,
-  Toast
+  DatetimePicker,
+  Toast,
+  Step,
+  Steps
 } from 'vant';
+Vue.use(Tab).use(Tabs).use(Field).use(List).use(Collapse).use(CellGroup).use(CollapseItem).use(PullRefresh).use(Dialog).use(Panel).use(Tabbar).use(Loading).use(Popup);
+Vue.use(Button).use(Picker).use(Switch).use(SwitchCell).use(NavBar).use(Cell).use(CellGroup).use(Icon).use(DatetimePicker).use(Toast).use(Step).use(Steps);
+Vue.use(Checkbox).use(CheckboxGroup);
 import VCharts from 'v-charts';
 Vue.use(VCharts);
-Vue.use(Tab).use(Tabs).use(Field).use(List).use(Collapse).use(CellGroup).use(CollapseItem).use(PullRefresh).use(Dialog).use(Panel).use(Tabbar).use(Loading).use(Popup);
-Vue.use(Button).use(Picker).use(Switch).use(SwitchCell).use(NavBar).use(Cell).use(CellGroup).use(Icon).use(Toast);
-Vue.use(Checkbox).use(CheckboxGroup);
-
 import App from './App'
 import router from './router'
 import 'lib-flexible/flexible.js'
-
 import store from './store'
+
+// import './assets/style/_variables.less'
 
 router.beforeEach((to, from, next) => {
   switch (to.name) {
@@ -63,6 +66,10 @@ router.beforeEach((to, from, next) => {
       document.title = "生成 折扣券";
       next();
       break;
+    // case 'createDiscountnew':
+    //   document.title = "生成 折扣券";
+    //   next();
+    //   break;
     case 'chartPeriodComparison':
       document.title = "周期销售表";
       next();
@@ -73,6 +80,10 @@ router.beforeEach((to, from, next) => {
       break;
     case 'chartCommodityMarket':
       document.title = "类别销售对比表";
+      next();
+      break;
+    case 'chartWeekSales':
+      document.title = "周销售报表";
       next();
       break;
     case 'alarm':
@@ -89,6 +100,7 @@ router.beforeEach((to, from, next) => {
       break;
     case 'scan':
       next();
+      document.title = "接单成功";
       break;
     case 'scanResult':
       next();
@@ -97,20 +109,24 @@ router.beforeEach((to, from, next) => {
       document.title = "用户菜单配置";
       next();
       break;
-    case 'ele':
-      document.title = "闹着玩儿";
+    case 'chartStoreSales':
+      document.title = "门店销售表";
       next();
       break;
-      case 'one':
+    case 'one':
       document.title = "商品类别销售";
       next();
       break;
-      case 'two':
+    case 'two':
       document.title = "公司销售分析 ";
       next();
       break;
-      case 'msgList':
+    case 'msgList':
       document.title = "消息列表";
+      next();
+      break;
+    case 'customerSet':
+      document.title = "顾客评价提醒";
       next();
       break;
     default:

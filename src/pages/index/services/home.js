@@ -13,6 +13,14 @@ const settings = {
   hasMsg: {
     url: '/msg/newmsg/',
     method: 'get'
+  },
+  mycard: {
+    url: '/company/mycard/',
+    method: 'get'
+  },
+  logout: {
+    url: '/logout/',
+    method: 'get'
   }
 }
 

@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <router-view/>
+    <keep-alive>     <!--使用keep-alive会将页面缓存-->
+    <router-view v-if="$route.meta.keepAlive"></router-view>
+   </keep-alive> 
+     <router-view v-if="!$route.meta.keepAlive"></router-view>
     <div id="loading" v-if="loading">
       <van-loading color="white" size="45px"/>
     </div>
@@ -18,20 +21,21 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 html,
 body {
   height: 100%;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 #app {
   width: 750px;
   height: 100%;
   margin: 0 auto;
-  /* background: #F2F2F2; */
   #loading {
     position: fixed;
     z-index: 1000000;
@@ -45,9 +49,6 @@ body {
       top:48%;
       left:45%;
     }
-    // .van-loading--black circle{
-    //   stroke:#51b8cb;
-    // }
   }
 }
 </style>

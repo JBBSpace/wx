@@ -29,22 +29,25 @@ document.title = "商品信息查询";
 export default {
   data() {
     return {
-      scanResultCode:this.$route.params.code,
+      scanResultCode: this.$route.params.code,
       scanResultList: [],
-      articlename:''
+      articlename: ""
     };
   },
   methods: {
-    init(){
-      const params = {code : this.scanResultCode}
+    init() {
+      const params = {
+        code: this.scanResultCode,
+        company_id: window.localStorage.getItem("company_id")
+      };
       scanAPI.stockInfo({ params: params }).then(res => {
         const { data } = res.data;
         this.scanResultList = data;
         this.articlename = res.data.articlename;
       });
-    },
+    }
   },
-  mounted(){
+  mounted() {
     this.init();
   }
 };
@@ -54,22 +57,22 @@ export default {
   .contain {
     padding: 25px;
     .detail {
-      overflow: hidden;/*父元素*/
+      overflow: hidden; /*父元素*/
       .label {
-        float: left;/*子元素*/
+        float: left; /*子元素*/
         font-size: 30px;
         color: rgba(0, 0, 0, 1);
       }
       .info {
-        overflow: hidden;/*子元素*/
+        overflow: hidden; /*子元素*/
         font-size: 26px;
         color: rgba(114, 113, 113, 1);
       }
-      .cion{
+      .cion {
         position: relative;
       }
-      .cion:before{
-        content:"台词：";
+      .cion:before {
+        content: "台词：";
       }
     }
 

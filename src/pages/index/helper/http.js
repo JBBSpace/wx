@@ -19,6 +19,9 @@ const instance = Axios.create({
 })
 instance.interceptors.request.use((config) => {
   store.commit('toggleLoading');
+  // var token = store.state.token ? store.state.token:'';
+  // console.log(store.state.token);
+  // config.headers['Authorization'] = token
   return config
 })
 instance.interceptors.response.use(
@@ -27,8 +30,8 @@ instance.interceptors.response.use(
       res.config.intercept !== 'none' &&
         res.config.intercept !== 'reject'
     ) {
-      if (res.data.retCode === '0000') {
-        // return res
+      if (res.data.status == 11) {
+        location.href='/#/login';
       }
     }
     store.commit('toggleLoading');

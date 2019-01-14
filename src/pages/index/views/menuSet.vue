@@ -1,47 +1,68 @@
 <template>
-  <div class="menuSet"> 
+  <div class="menuSet">
     <div class="weeks">
       <div class="allChecked-contain">
-        <div class="allChecked_title"><van-icon name="ren"/> 用户列表</div>
+        <div class="allChecked_title">
+          <van-icon name="ren"/>用户列表
+        </div>
         <span class="sanjiao"></span>
         <div v-if="users.length">
-          <label for="menuSet_allChecked" class="allChecked_label">
-          {{this.usersChecked.length == this.users.length?"取消全选":"全选"}}
-          </label>
+          <label
+            for="menuSet_allChecked"
+            class="allChecked_label"
+          >{{this.usersChecked.length == this.users.length?"取消全选":"全选"}}</label>
           <input type="checkbox" id="menuSet_allChecked" v-model="allChecked">
         </div>
       </div>
       <div class="userList">
-        <div class="userItem" v-for="(item,index) in users" :key="index" @click="selectUser(item.wx_user_id)">
-          <div class="name">{{item.name}}<span class="wxid"> ({{item.wx_user_id}})</span></div>
-          <div><input type="checkbox" :id="item.wx_user_id" :value="item.wx_user_id" v-model="usersChecked">
+        <div class="userItem" v-for="(item) in users" :key="item.id" @click="selectUser(item.id)">
+          <div class="name">
+            {{item.name}}
+            <span class="wxid">({{item.wx_user_id}})</span>
+          </div>
+          <div>
+            <input type="checkbox" :id="item.id" :value="item.id" v-model="usersChecked">
           </div>
         </div>
       </div>
-      <div class="nextStep-contain"><span class="nextStep" @click="toggleShow">下一步</span></div>
+      <div class="nextStep-contain">
+        <span class="nextStep" @click="toggleShow">下一步</span>
+      </div>
       <van-popup v-model="show" position="right">
         <div class="menuList">
-          <div class="title"><van-icon name="caidan"/> 菜单列表 
+          <div class="title">
+            <van-icon name="caidan"/>菜单列表
             <span class="sanjiao"></span>
           </div>
           <div class="list">
-            <div class="userItem" v-for="(item) in menus" :key="item.id" @click="selectMenu(item.id)">
+            <div
+              class="userItem"
+              v-for="(item) in menus"
+              v-show="isShow(item.id)"
+              :key="item.id"
+              @click="selectMenu(item.id)"
+            >
               <div class="name">
-                <span :class="[menusChecked.includes(item.id) ? 'active' : '']">
-                {{item.title}}</span></div>
-              <div><input type="checkbox" :id="item.id" :value="item.id" v-model="menusChecked">
+                <span :class="[menusChecked.includes(item.id) ? 'active' : '']">{{item.title}}</span>
+              </div>
+              <div>
+                <input type="checkbox" :id="item.id" :value="item.id" v-model="menusChecked">
               </div>
             </div>
           </div>
-          <div class="nextStep-contain"><span class="nextStep backBtn" @click="toggleShow">上一步</span><span class="nextStep" @click="save">完 成</span></div>
+          <div class="nextStep-contain">
+            <span class="nextStep backBtn" @click="back">上一步</span>
+            <span class="nextStep" @click="save">完 成</span>
+          </div>
         </div>
       </van-popup>
     </div>
-  </div> 
+  </div>
 </template>  
   
 <script>
 import "../assets/style/iconfont.css";
+import homeApi from "@/pages/index/services/home";
 import menuSetApi from "@/pages/index/services/menuSet";
 import util from "@/pages/index/helper/util";
 export default {
@@ -80,10 +101,23 @@ export default {
           id: 7
         },
         {
+          title: "用户菜单配置",
+          id: 9
+        },
+        {
           title: "报表闹钟",
           id: 10
+        },
+        {
+          title: "门店销售表",
+          id: 13
+        },
+        {
+          title: "周销售报表",
+          id: 14
         }
       ],
+      menulist: [],
       menusChecked: []
     };
   },
@@ -97,9 +131,9 @@ export default {
           this.usersChecked = [];
         } else {
           this.users.map(item => {
-            this.usersChecked.includes(item.wx_user_id)
+            this.usersChecked.includes(item.id)
               ? ""
-              : this.usersChecked.push(item.wx_user_id);
+              : this.usersChecked.push(item.id);
           });
         }
       }
@@ -113,10 +147,11 @@ export default {
         })
         .then(res => {
           const { status, message, data } = res.data;
-          if (status != "0") {
+          if (status) {
             this.$toast(message);
           } else {
-            this.users = data;
+            this.users = data.users;
+            this.menulist = data.menulist;
           }
         });
     },
@@ -130,6 +165,9 @@ export default {
           ? this.usersChecked.splice(this.usersChecked.indexOf(id), 1)
           : this.usersChecked.push(id);
       }
+    },
+    isShow(id) {
+      return this.menulist.includes(id);
     },
     selectMenu(id) {
       var e = e || window.event;
@@ -145,9 +183,28 @@ export default {
     toggleShow() {
       if (this.usersChecked.length) {
         this.show = !this.show;
+        if (this.usersChecked.length == 1) {
+          const curUser = this.users.filter(
+            item => item.id == this.usersChecked[0]
+          )[0];
+          const params = {
+            company_id: localStorage.getItem("company_id"),
+            usermenu_sign: 1,
+            wx_user_id: curUser.wx_user_id,
+            hg_user_id: curUser.hg_user_id
+          };
+          homeApi.menus({ params: params }).then(res => {
+            const { data } = res.data;
+            this.menusChecked = data.menu_list;
+          });
+        }
       } else {
         this.$toast("请选择用户！");
       }
+    },
+    back() {
+      this.show = !this.show;
+      this.menusChecked = [];
     },
     save() {
       if (this.menusChecked.length) {

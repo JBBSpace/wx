@@ -1,51 +1,78 @@
-<template>  
-  <div class="home" v-show="show">
+<template>
+  <div class="home">
     <div class="head">
       <div class="a"></div>
       <div class="b"></div>
       <div class="c">
-        <div class="item" v-for="item in discount" :key="item.id" v-show="isShow(item.id)" @click="go(item.linkName)">
-        <img :src="item.imgPath" alt="">
-        <p>{{item.text}}</p>
+        <div class="item" @click="scan">
+          <img class src="../assets/home/scan.png" alt>
+          <p>扫一扫</p>
+        </div>
+        <div class="item" @click="go('msgList')">
+          <span v-if="hasMsg"></span>
+          <img class src="../assets/home/msg.png" alt>
+          <p>消息</p>
+        </div>
+        <div class="item" @click="showQrcode">
+          <img class src="../assets/home/myCard.png" alt>
+          <p>我的卡片</p>
+        </div>
+        <div class="item" @click="logout()">
+          <img class src="../assets/home/out.png" alt>
+          <p>取消绑定</p>
         </div>
       </div>
+      <div class="d">用户ID：{{userid}}</div>
     </div>
     <p class="title">我的报表</p>
     <div class="mySubscibe">
-      <div class="item" v-for="item in mySubscibe" :key="item.id" v-show="isShow(item.id)" @click="go(item.linkName)">
-        <img :src="item.imgPath" alt="">
+      <div
+        class="item"
+        v-for="item in mySubscibe"
+        :key="item.id"
+        v-show="isShow(item.id)"
+        @click="go(item.linkName)"
+      >
+        <img :src="item.imgPath" alt>
         <p>{{item.text}}</p>
       </div>
     </div>
     <p class="title">我的操作</p>
     <div class="fnModule">
-      <div class="item" @click="scan" v-show="isShow(8)">
-        <p class="saoma"><van-icon name="saoyisao"/></p>
-        <p>扫一扫</p>
-      </div>
-      <div class="item" @click="go('menuSet')" v-show="isShow(9)">
-        <img class="menuset" src="../assets/home/10.png" alt="">
-        <p>用户菜单配置</p>
-      </div>
-      <div class="item" @click="go('msgList')" v-show="isShow(11)">
-        <span v-if="hasMsg"></span>
-        <img class="menuset" src="../assets/home/msg.png" alt="">
-        <p>消息</p>
+      <div
+        class="item"
+        v-for="item in fnModule"
+        :key="item.id"
+        v-show="isShow(item.id)"
+        @click="go(item.linkName)"
+      >
+        <img :src="item.imgPath" alt>
+        <p>{{item.text}}</p>
       </div>
     </div>
+    <van-popup v-model="mycardPopup">
+      <div class="myCard-Qrcode">
+        <canvas id="canvas"></canvas>
+        <p>扫一扫上面的二维码图案，加我通讯录</p>
+      </div>
+    </van-popup>
   </div>
 </template>  
   
 <script>
-import util from "@/pages/index/helper/util";
 import wx from "weixin-js-sdk";
 import scanAPI from "@/pages/index/services/scan";
 import homeApi from "@/pages/index/services/home";
+import Cookies from "js-cookie";
+import util from "@/pages/index/helper/util";
+import Vue from "vue";
+import QRCode from "qrcode";
+Vue.use(QRCode);
 export default {
   data() {
     return {
-      show: false,
       shouldShow: [],
+      userid:'',
       discount: [
         {
           imgPath: require("../assets/home/creatediscount.png"),
@@ -96,28 +123,82 @@ export default {
           text: "类别销售对比表",
           linkName: "chartCommodityMarket",
           id: 7
+        },
+        {
+          imgPath: require("../assets/home/storeSales.png"),
+          text: "门店销售表",
+          linkName: "chartStoreSales",
+          id: 13
+        },
+        {
+          imgPath: require("../assets/home/week.png"),
+          text: "周销售报表",
+          linkName: "chartWeekSales",
+          id: 14
         }
       ],
-      hasMsg: false
+      fnModule: [
+        {
+          imgPath: require("../assets/home/creatediscount.png"),
+          text: "我的折扣券",
+          linkName: "discountList",
+          id: 1
+        },
+        {
+          imgPath: require("../assets/home/discount.png"),
+          text: "生成折扣券",
+          linkName: "createDiscount",
+          id: 2
+        },
+        {
+          imgPath: require("../assets/home/alarm.png"),
+          text: "报表闹钟",
+          linkName: "alarmList",
+          id: 10
+        },
+        {
+          imgPath: require("../assets/home/10.png"),
+          text: "用户菜单配置",
+          linkName: "menuSet",
+          id: 9
+        },
+        {
+          imgPath: require("../assets/home/10.png"),
+          text: "顾客评价提醒",
+          linkName: "customerSet",
+          id: 15
+        }
+      ],
+      hasMsg: false,
+      mycardPopup: false,
+      checked:true,
     };
   },
   methods: {
     check() {
+      // 获取公司company_id
       const company_id = util.getRequest().company_id
         ? util.getRequest().company_id
-        : window.localStorage.getItem("company_id");
-      const wx_userid = util.getCookie("wx_userid");
-      util.setStorage("company_id", company_id);
-      if (wx_userid) {
-        this.show = true;
+        : localStorage.getItem("company_id");
+      if (!company_id) {
+        this.$toast("company_id为空");
+        return;
+      }
+      localStorage.setItem("company_id", company_id);
+      // 获取company_id与微信UserId的映射关系
+      const curUserId = Cookies.get(company_id) ? Cookies.get(company_id) : "";
+      if (curUserId) {
+        // 已绑定
         const params = {
-          company_id: company_id,
-          wx_user_id: wx_userid
+          company_id
         };
+        // 获取菜单
         homeApi.menus({ params: params }).then(res => {
           const { data } = res.data;
-          this.shouldShow = data;
+          this.shouldShow = data.menu_list;
+          this.userid = data.userid
         });
+        // 查询消息
         homeApi.hasMsg({ params: params }).then(res => {
           const { status, message, data } = res.data;
           if (status) {
@@ -126,19 +207,57 @@ export default {
             this.hasMsg = data.totalcount ? true : false;
           }
         });
-      } else {
-        homeApi.check({ params: { company_id: company_id } }).then(res => {
-          const { status, uri, message } = res.data;
-          if (status == "0") {
-            window.location.href = uri;
-          } else {
+        // 查询名片
+        homeApi.mycard({ params: params }).then(res => {
+          const { status, message, data } = res.data;
+          if (status) {
             this.$toast(message);
+          } else {
+            this.mycardInfo = data.card_msg;
           }
         });
+      } else {
+        // 未绑定
+        this.go("login");
+        return;
       }
     },
     isShow(id) {
       return this.shouldShow.includes(id);
+    },
+    showQrcode() {
+      this.mycardPopup = true;
+      setTimeout(() => {
+        this.createQrcode();
+      }, 30);
+    },
+    createQrcode() {
+      var canvas = document.getElementById("canvas");
+      QRCode.toCanvas(
+        canvas,
+        this.mycardInfo,
+        function(error) {
+          if (error) console.error(error);
+        }
+      );
+    },
+    logout() {
+      homeApi
+        .logout({
+          params: {
+            company_id: localStorage.getItem("company_id")
+          }
+        })
+        .then(res => {
+          const { status, message } = res.data;
+          if (status) {
+            this.$toast(message);
+          } else {
+            this.$router.push({
+              name: "login"
+            });
+          }
+        });
     },
     go(urlName) {
       if (urlName) {
@@ -148,11 +267,11 @@ export default {
       }
     },
     scan: function() {
+      const _this = this;
       const params = {
-        url: window.location.href.split("#")[0],
+        url: window.location.href,
         company_id: window.localStorage.getItem("company_id")
       };
-      const _this = this;
       scanAPI.wxSdkConfig({ data: params }).then(res => {
         const { data } = res.data;
         wx.config({
@@ -171,7 +290,6 @@ export default {
           jsApiList: ["scanQRCode"]
         });
       });
-
       wx.ready(function() {
         wx.scanQRCode({
           desc: "scanQRCode desc",
@@ -179,17 +297,16 @@ export default {
           scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
           success: function(res) {
             var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-            var a = result.split("/");
             _this.$router.push({
-              name: "scanResult",
-              params: { code: a[a.length - 1] }
+              name: "scan",
+              query: { code: result }
             });
           }
         });
       });
-    },
+    }
   },
-  mounted() {
+  activated() {
     this.check();
   }
 };
@@ -221,16 +338,16 @@ export default {
       background-size: 80px;
       border-radius: 50%;
       position: absolute;
-      top: 70px;
-      left: 50%;
+      top: 55px;
+      left: 26%;
       margin-left: -60px;
       z-index: 2;
       box-shadow: 0px 8px 10px #6ac3ec;
     }
     .c {
       width: 690px;
-      height: 205px;
-      padding-top: 25px;
+      height: 210px;
+      padding-top: 35px;
       box-sizing: border-box;
       border-radius: 30px;
       background: #fff;
@@ -243,7 +360,7 @@ export default {
       display: flex;
       box-shadow: 0px 10px 8px #6ac3ec;
       .item {
-        width: 33%;
+        width: 25%;
         height: 200px;
         box-sizing: border-box;
         text-align: center;
@@ -252,24 +369,34 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        position: relative;
+        span {
+          width: 22px;
+          height: 22px;
+          border-radius: 100%;
+          position: absolute;
+          background: #ee5108;
+          right: 30%;
+          top: 8%;
+        }
         img {
-          width: 60px;
-          height: 60px;
-          margin: 6px auto;
+          width: 58px;
+          height: 58px;
+          margin:0 auto;
         }
       }
     }
-  }
-  .discount {
-    width: 750px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    background: #ffffff;
+    .d {
+      position: absolute;
+      left: 37%;
+      top: 110px;
+      color: #ffffff;
+      font-size: 28px;
+    }
   }
   .title {
     font-size: 30px;
-    padding: 20px;
+    text-indent: 15px;
     color: rgba(152, 152, 152, 1);
   }
   .mySubscibe,
@@ -281,34 +408,37 @@ export default {
     .item {
       width: 250px;
       height: 250px;
-      font-size: 26px;
+      font-size: 24px;
       color: rgba(152, 152, 152, 1);
       text-align: center;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content:center;
       box-sizing: border-box;
       border-right: 1px solid #e1eeee;
       border-bottom: 1px solid #e1eeee;
-      .saoma {
-        font-size: 58px;
-        color: #43a636;
-      }
-      position: relative;
-      span {
-        width: 22px;
-        height: 22px;
-        border-radius: 100%;
-        position: absolute;
-        background: #ee5108;
-        right: 34%;
-        top: 25%;
-      }
       img {
-        width: 60px;
-        height: 60px;
-        margin: 8px auto;
+        width: 64px;
+        height: 64px;
+        margin: 4px auto;
       }
+    }
+  }
+  .myCard-Qrcode {
+    width: 643px;
+    height: 618px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    #canvas {
+      width: 450px !important;
+      height: 450px !important;
+      margin-top: 60px;
+    }
+    p {
+      font-size: 32px;
+      color: rgba(114, 113, 113, 1);
     }
   }
 }

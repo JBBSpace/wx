@@ -9,6 +9,10 @@ const settings = {
   stockInfo: {
     url: '/report/viewreport/StockInfo/',
     method: 'GET'
+  },
+  fullcode: {
+    url: '/retail/fullcode/',
+    method: 'POST'
   }
 }
 

@@ -1,31 +1,47 @@
 <template>
-  <div class="echart">
-    <div class="companyName">
-      <span class="label">公司名称：</span><span class="text" @click="selectCompany">{{company.name}}</span>
+  <div class="chart-commodity-market">
+    <div class="company-name">
+      <span class="label">公司名称：</span>
+      <span class="select-text" @click="popupShow = !popupShow">{{companyInfo.name}}</span>
     </div>
-    <div class="echartType">
-      <span class="label">报表类型：</span><span v-for="item in echartTypeList" :class="[{ active: isActive(item.type) }, 'item']" :key="item.type" @click="toggleType(item.type)">{{item.text}}</span>
+    <div class="echart-type">
+      <van-collapse v-model="activeNames" accordion>
+        <van-collapse-item title="报表类型：" :name="1" :border="false">
+          <div class="info">
+            <span
+              v-for="item in echartTypeList"
+              :class="[{ active: isActive(item.type) }, 'item']"
+              :key="item.type"
+              @click="toggleType(item.type)"
+            >{{item.text}}</span>
+          </div>
+        </van-collapse-item>
+      </van-collapse>
     </div>
     <div class="echartPie">
-      <p class="label">饼形报表展示</p>
+      <p class="chart-label">销售金额占比</p>
       <ve-pie :data="chartData" :settings="chartSettings">
-        <div v-if="dataEmpty" class="data-empty">没有数据</div>
+        <div v-if="dataEmpty" class="data-empty">查询成功 暂无数据</div>
       </ve-pie>
-      <p class="theme"><span></span>饼形统计报表</p>
     </div>
     <div class="echartHistogram">
-      <p class="label">柱形报表展示</p>
+      <p class="chart-label">销售金额</p>
       <ve-histogram :data="chartData" :extend="extend" :settings="chartSettings02">
-        <div v-if="dataEmpty" class="data-empty">没有数据</div>
+        <div v-if="dataEmpty" class="data-empty">查询成功 暂无数据</div>
       </ve-histogram>
-      <p class="theme"><span></span>柱形统计报表</p>
     </div>
-    <van-popup v-model="show" position="bottom">
+    <div class="echartHistogram">
+      <p class="chart-label">销售数量</p>
+      <ve-histogram :data="chartDataNumber" :extend="extend" :settings="chartSettings02">
+        <div v-if="dataEmpty" class="data-empty">查询成功 暂无数据</div>
+      </ve-histogram>
+    </div>
+    <van-popup v-model="popupShow" position="bottom">
       <van-picker
         show-toolbar
         value-key="name"
-        :columns="columns"
-        @cancel="onCancel"
+        :columns="companyList"
+        @cancel="popupShow = !popupShow"
         @confirm="onConfirm"
       />
     </van-popup>
@@ -40,26 +56,24 @@ export default {
       radius: 80,
       offsetY: 290,
       label: {
-        fontSize: 8,
-        formatter: '{b}:{d}%'
+        formatter: "{b} : {d}%"
       }
     };
     this.chartSettings02 = {
       labelMap: {
-        money: "金额"
-      },
-      label: {
-        fontSize: 8
+        money: "",
+        number: ""
       }
     };
     this.extend = {
       "xAxis.0.axisLabel.rotate": 90
     };
     return {
-      show: false,
-      company: {},
-      columns: [],
-      curType: "3",
+      popupShow: false,
+      companyInfo: { id: "", name: "请选择公司名称", code: "" },
+      companyList: [],
+      activeNames: 1,
+      curType: "0",
       echartTypeList: [
         {
           text: "日报",
@@ -74,12 +88,47 @@ export default {
           type: "2"
         },
         {
-          text: "年报",
+          text: "季度报",
           type: "3"
+        },
+        {
+          text: "半年报",
+          type: "4"
+        },
+        {
+          text: "年报",
+          type: "5"
+        },{
+          text: "昨日",
+          type: "10"
+        },
+        {
+          text: "上周报",
+          type: "11"
+        },
+        {
+          text: "上月报",
+          type: "12"
+        },
+        {
+          text: "上季度",
+          type: "13"
+        },
+        {
+          text: "上半年",
+          type: "14"
+        },
+        {
+          text: "去年",
+          type: "15"
         }
       ],
       chartData: {
         columns: ["cls_name", "money"],
+        rows: []
+      },
+      chartDataNumber: {
+        columns: ["cls_name", "number"],
         rows: []
       },
       dataEmpty: true
@@ -88,25 +137,27 @@ export default {
   methods: {
     initCompanyList() {
       const params = {
-        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
-        name:'st_company',
+        company_id: localStorage.getItem("company_id"),
+        name: "st_company"
       };
-      chartApi.initCompanyList({ params: { ...params } }).then(res => {
+      chartApi.initCompanyList({ params: params }).then(res => {
         const { status, message, data } = res.data;
-        if (status == 0) {
-          this.columns = data;
-          this.company = data[0] ? data[0] : "请选择公司名称";
-          this.viewreportData();
-        } else {
+        if (status) {
           this.$toast(message);
+        } else {
+          this.companyList = data;
+          this.companyInfo = data[0]
+            ? data[0]
+            : { id: "", name: "公司列表获取出错", code: "" };
+          this.viewreportData();
         }
       });
     },
     viewreportData() {
       const params = {
-        company_id: this.$route.query.company_id?this.$route.query.company_id:window.localStorage.getItem("company_id"),
+        company_id: localStorage.getItem("company_id"),
         Datetype: this.curType,
-        comid: this.company.id ? this.company.id : ""
+        comid: this.companyInfo.id ? this.companyInfo.id : ""
       };
       chartApi.viewreportDataClass({ params: params }).then(res => {
         const { status, message, data } = res.data;
@@ -122,17 +173,15 @@ export default {
           } else {
             this.chartSettings.offsetY = 320;
           }
-          if(lng > 0){
+          if (lng > 0) {
             this.dataEmpty = false;
           }
           this.chartData.rows = data;
+          this.chartDataNumber.rows = data;
         } else {
           this.$toast(message);
         }
       });
-    },
-    selectCompany() {
-      this.show = !this.show;
     },
     isActive(isActive) {
       return this.curType === isActive;
@@ -142,12 +191,9 @@ export default {
       this.viewreportData();
     },
     onConfirm(value, index) {
-      this.company = value;
-      this.show = !this.show;
+      this.companyInfo = value;
+      this.popupShow = !this.popupShow;
       this.viewreportData();
-    },
-    onCancel() {
-      this.show = !this.show;
     }
   },
   mounted() {
@@ -155,88 +201,76 @@ export default {
   }
 };
 </script>
-<style lang="scss">
-.van-picker__toolbar {
-  font-size: 32px;
-  color: #666;
-}
-.echart {
-  padding: 60px 25px;
-  .companyName,
-  .echartType {
-    height: 68px;
-    line-height: 68px;
-    .label {
-      font-size: 30px;
-      vertical-align: middle;
-    }
-    .text {
-      display: inline-block;
-      vertical-align: middle;
-      width: 481px;
-      height: 68px;
-      border: 1px solid #727171;/*no*/
-      border-radius: 8px;
-      color: #727171;
+<style lang="scss" scoped>
+.chart-commodity-market {
+  padding: 30px 20px 0 20px;
+  .label {
+    font-size: 30px;
+  }
+  .company-name {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    .select-text {
+      width: 480px;
       font-size: 26px;
-      padding-left: 16px;
-      box-sizing: border-box;
-      background: url("../assets/select.png") no-repeat 430px center;
-    }
-    .item {
-      display: inline-block;
-      width: 98px;
-      height: 56px;
-      border: 1px solid #727171;/*no*/
-      border-radius: 6px;
-      margin-right: 30px;
-      font-size: 28px;
+      line-height: 68px;
       color: #727171;
-      text-align: center;
-      line-height: 56px;
-      vertical-align: middle;
-      &.active {
-        background-color: #51b8cb;
-        border: 1px solid #51b8cb;/*no*/
-        color: white;
+      border: 1px solid #ebedf0; /*no*/
+      border-radius: 8px;
+      padding-left: 20px;
+      background: url("../assets/select.png") no-repeat 440px center;
+    }
+  }
+  .echart-type {
+    .info {
+      font-size: 0;
+      .item {
+        display: inline-block;
+        width: 98px;
+        line-height: 56px;
+        border: 1px solid #ebedf0; /*no*/
+        border-radius: 6px;
+        margin: 0 10px 6px 0;
+        font-size: 26px;
+        color: #727171;
+        text-align: center;
+        &.active {
+          background-color: #51b8cb;
+          border: 1px solid #51b8cb; /*no*/
+          color: white;
+        }
       }
     }
   }
-  .echartType {
-    margin: 50px 0;
-  }
   .echartPie,
   .echartHistogram {
-    .label {
-      font-size: 30px;
-      padding-left: 50px;
-      margin-bottom: 30px;
-    }
-    .theme {
-      text-align: center;
+    .data-empty {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.7);
+      color: #888;
       font-size: 28px;
     }
+    .chart-label {
+      font-size: 30px;
+      padding-left: 50px;
+      line-height: 70px;
+    }
   }
-  .echartPie .label {
+  .echartPie .chart-label {
     background: url("../assets/pie.png") no-repeat left center;
     background-size: 40px 40px;
   }
-  .echartHistogram .label {
+  .echartHistogram .chart-label {
     background: url("../assets/zhu.png") no-repeat left center;
     background-size: 40px 40px;
-  }
-  .data-empty {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.7);
-    color: #888;
-    font-size: 28px;
   }
 }
 </style>  

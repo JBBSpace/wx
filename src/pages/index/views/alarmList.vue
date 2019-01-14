@@ -30,18 +30,15 @@ export default {
     init() {
       const params = {
         company_id: window.localStorage.getItem("company_id"),
-        wx_user_id: util.getCookie("wx_userid")
       };
-      alarmApi.alarmtask({ params: params }).then(
-        res => {
-          const { data, status, message } = res.data;
-          if (status) {
-            this.$toast(message);
-          } else {
-            this.alarmClockList = data;
-          }
+      alarmApi.alarmtask({ params: params }).then(res => {
+        const { data, status, message } = res.data;
+        if (status) {
+          this.$toast(message);
+        } else {
+          this.alarmClockList = data;
         }
-      );
+      });
     },
     goSet(self) {
       var e = e || window.event;
@@ -50,7 +47,6 @@ export default {
         if (self.send_day.length) {
           const data = {
             company_id: window.localStorage.getItem("company_id"),
-            wx_user_id: util.getCookie("wx_userid"),
             is_active: self.is_active,
             muen_id: self.id
           };
@@ -116,22 +112,22 @@ export default {
     .cell {
       display: flex;
       justify-content: space-between;
-      padding: 40px 20px 30px 20px;
+      padding: 0 20px 0 20px;
       border-bottom: 1px solid #989898; /*no*/
       .left {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        // display: flex;
+        // flex-direction: column;
+        // justify-content: center;
         .time {
-          font-size: 56px;
+          font-size: 36px;
           color: rgba(81, 184, 203, 1);
         }
         .name {
-          font-size: 32px;
+          font-size: 33px;
           color: rgba(0, 0, 0, 1);
         }
         .week {
-          font-size: 28px;
+          font-size: 24px;
           color: rgba(114, 113, 113, 1);
         }
       }

@@ -322,10 +322,6 @@ export default {
   },
   methods: {
     _initScroll() {
-      this.menuScroll = new BScroll(this.$refs.menuWrapper, {
-        probeType: 3, //让better-scroll监听scroll事件
-        click: true //允许better-scroll列表上的点击事件
-      });
       this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
         probeType: 3, //让better-scroll监听scroll事件
         click: true //允许better-scroll列表上的点击事件

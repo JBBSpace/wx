@@ -32,3 +32,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 用户菜单配置:9
 报表闹钟:10
 消息:11
+门店销售表:13
+周销售报表:14
+顾客评价提醒:15
+HuanShiTaiDanChunLe

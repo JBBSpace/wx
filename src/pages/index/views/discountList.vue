@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-12 13:26:04 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2018-09-06 09:45:13
+ * @Last Modified time: 2018-12-21 14:06:07
  */
 <template>
   <div>
@@ -12,40 +12,50 @@
       <span class="item createdate">生成日期</span>
       <span class="item operation">操作</span>
     </div>
-    <van-list
-      v-model="loading"
-      :finished="finished"
-      @load="getTable"
-    >
+    <van-list v-model="loading" :finished="finished" @load="getTable">
       <van-cell v-for="item in list" :key="item.id" @click="detailInfo(item)">
-        <span class="item discount">{{item.discount}}{{ item.discount=="--"?"":"%"}}</span>
+        <span class="item discount">{{item.discount}}{{ item.discount=="--"?"":item.mode==2?"":"%"}}</span>
         <span class="item type">{{item.type}}</span>
         <span class="item createdate">{{item.createdate}}</span>
         <template v-if="item.userflag === 1">
           <span class="item operation usered">已使用</span>
         </template>
-        <template v-else-if="item.userflag === 0">
-          <span class="item operation"><van-button size="mini" @click.stop="invalid(item.id)">作废</van-button>
+        <template v-else-if="item.userflag === 0&&item.isexpiry===0">
+          <span class="item operation">
+            <van-button size="mini" @click.stop="invalid(item.id)">作废</van-button>
           </span>
         </template>
-        <template v-else>
+        <template v-else-if="item.userflag === 0&&item.isexpiry===1">
+          <span class="item operation disabled">已过期</span>
+        </template>
+        <template v-else-if="item.userflag === 2">
           <span class="item operation disabled">已作废</span>
         </template>
       </van-cell>
     </van-list>
-    <van-dialog
-      v-model="show"
-      title="折扣券使用信息"
-    >
+    <van-dialog v-model="show" title="折扣券使用信息">
       <p class="msgInfo">
-        <span v-for="(item,index) in dialog.ClassInfo" :key="index">
-          {{item.classname}} : {{item.ratio}}%
-        </span>
+        <span
+          v-for="(item,index) in dialog.ClassInfo"
+          :key="index"
+        >{{item.classname}} : {{item.ratio}}%</span>
       </p>
-      <p class="msgInfo"><span>折扣码 ：</span>{{dialog.discountcode}}</p>
-      <p class="msgInfo"><span>使用时间 ：</span>{{dialog.userdate}}</p>
-      <p class="msgInfo"><span>门店 ：</span>{{dialog.c_comname}}</p>
-      <p class="msgInfo"><span>订单编号 ：</span>{{dialog.retailcode}}</p>
+      <p class="msgInfo">
+        <span>折扣码 ：</span>
+        {{dialog.discountcode}}
+      </p>
+      <p class="msgInfo">
+        <span>使用时间 ：</span>
+        {{dialog.userdate}}
+      </p>
+      <p class="msgInfo">
+        <span>门店 ：</span>
+        {{dialog.c_comname}}
+      </p>
+      <p class="msgInfo">
+        <span>订单编号 ：</span>
+        {{dialog.retailcode}}
+      </p>
     </van-dialog>
   </div>
 </template>
@@ -68,7 +78,6 @@ export default {
     getTable() {
       const params = {
         count: this.list.length + 1,
-        wx_userid: util.getCookie("wx_userid"),
         company_id: window.localStorage.getItem("company_id")
       };
       discountListApi.getTable({ params: { ...params } }).then(
@@ -101,8 +110,7 @@ export default {
         .invalid({
           data: {
             id,
-            company_id: window.localStorage.getItem("company_id"),
-            wx_userid: util.getCookie("wx_userid")
+            company_id: window.localStorage.getItem("company_id")
           }
         })
         .then(
@@ -127,6 +135,13 @@ export default {
       if (row.userflag == 1) {
         this.show = true;
         this.dialog = row;
+      } else if (row.userflag == 0) {
+        const { discountcode, intro, notes, expiry_date, rollname } = row;
+        window.location.href = `/qrcode.html?barcode=${discountcode}&intro=${encodeURI(
+          intro
+        )}&notes=${encodeURI(notes)}&expiry_date=${encodeURI(
+          expiry_date
+        )}&rollname=${encodeURI(rollname)}`;
       }
     }
   }

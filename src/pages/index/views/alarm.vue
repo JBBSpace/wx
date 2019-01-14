@@ -165,8 +165,7 @@ export default {
         return 
       }
       const data = {
-        company_id: window.localStorage.getItem("company_id"),
-        wx_user_id: util.getCookie("wx_userid"),
+        company_id: localStorage.getItem("company_id"),
         is_active: true,
         muen_id: this.$route.query.id,
         send_time: this.hoursAndMinutes.join(":"),
