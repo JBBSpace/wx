@@ -4,21 +4,33 @@
       <div class="a"></div>
       <div class="b"></div>
       <div class="c">
-        <div class="item" @click="scan">
-          <img class src="../assets/home/scan.png" alt>
+        <div class="item"
+             @click="scan">
+          <img class
+               src="../assets/home/scan.png"
+               alt>
           <p>扫一扫</p>
         </div>
-        <div class="item" @click="go('msgList')">
+        <div class="item"
+             @click="go('msgList')">
           <span v-if="hasMsg"></span>
-          <img class src="../assets/home/msg.png" alt>
+          <img class
+               src="../assets/home/msg.png"
+               alt>
           <p>消息</p>
         </div>
-        <div class="item" @click="showQrcode">
-          <img class src="../assets/home/myCard.png" alt>
+        <div class="item"
+             @click="showQrcode">
+          <img class
+               src="../assets/home/myCard.png"
+               alt>
           <p>我的卡片</p>
         </div>
-        <div class="item" @click="logout()">
-          <img class src="../assets/home/out.png" alt>
+        <div class="item"
+             @click="logout()">
+          <img class
+               src="../assets/home/out.png"
+               alt>
           <p>取消绑定</p>
         </div>
       </div>
@@ -26,27 +38,25 @@
     </div>
     <p class="title">我的报表</p>
     <div class="mySubscibe">
-      <div
-        class="item"
-        v-for="item in mySubscibe"
-        :key="item.id"
-        v-show="isShow(item.id)"
-        @click="go(item.linkName)"
-      >
-        <img :src="item.imgPath" alt>
+      <div class="item"
+           v-for="item in mySubscibe"
+           :key="item.id"
+           v-show="isShow(item.id)"
+           @click="go(item.linkName)">
+        <img :src="item.imgPath"
+             alt>
         <p>{{item.text}}</p>
       </div>
     </div>
     <p class="title">我的操作</p>
     <div class="fnModule">
-      <div
-        class="item"
-        v-for="item in fnModule"
-        :key="item.id"
-        v-show="isShow(item.id)"
-        @click="go(item.linkName)"
-      >
-        <img :src="item.imgPath" alt>
+      <div class="item"
+           v-for="item in fnModule"
+           :key="item.id"
+           v-show="isShow(item.id)"
+           @click="go(item.linkName)">
+        <img :src="item.imgPath"
+             alt>
         <p>{{item.text}}</p>
       </div>
     </div>
@@ -69,10 +79,10 @@ import Vue from "vue";
 import QRCode from "qrcode";
 Vue.use(QRCode);
 export default {
-  data() {
+  data () {
     return {
       shouldShow: [],
-      userid:'',
+      userid: '',
       discount: [
         {
           imgPath: require("../assets/home/creatediscount.png"),
@@ -135,7 +145,24 @@ export default {
           text: "周销售报表",
           linkName: "chartWeekSales",
           id: 14
-        }
+        },
+        {
+          imgPath: require("../assets/home/gys.png"),
+          text: "供应商排名",
+          linkName: "supplier",
+          id: 15
+        },
+        {
+          imgPath: require("../assets/home/kdjzs.png"),
+          text: "客单价走势图",
+          linkName: "chartrepCjzs",
+          id: 17
+        },{
+          imgPath: require("../assets/home/gkpj.png"),
+          text: "顾客评价",
+          linkName: "evaluation",
+          id: 19
+        },
       ],
       fnModule: [
         {
@@ -161,21 +188,25 @@ export default {
           text: "用户菜单配置",
           linkName: "menuSet",
           id: 9
-        },
-        {
-          imgPath: require("../assets/home/10.png"),
-          text: "顾客评价提醒",
-          linkName: "customerSet",
-          id: 15
-        }
+        }, {
+          imgPath: require("../assets/home/tz.png"),
+          text: "公告通知",
+          linkName: "",
+          id: 16
+        }, {
+          imgPath: require("../assets/home/wdgk.png"),
+          text: "我的顾客",
+          linkName: "myclients",
+          id: 18
+        }, 
       ],
       hasMsg: false,
       mycardPopup: false,
-      checked:true,
+      checked: true,
     };
   },
   methods: {
-    check() {
+    check () {
       // 获取公司company_id
       const company_id = util.getRequest().company_id
         ? util.getRequest().company_id
@@ -197,6 +228,7 @@ export default {
           const { data } = res.data;
           this.shouldShow = data.menu_list;
           this.userid = data.userid
+          localStorage.setItem("role", data.role);
         });
         // 查询消息
         homeApi.hasMsg({ params: params }).then(res => {
@@ -222,26 +254,26 @@ export default {
         return;
       }
     },
-    isShow(id) {
+    isShow (id) {
       return this.shouldShow.includes(id);
     },
-    showQrcode() {
+    showQrcode () {
       this.mycardPopup = true;
       setTimeout(() => {
         this.createQrcode();
       }, 30);
     },
-    createQrcode() {
+    createQrcode () {
       var canvas = document.getElementById("canvas");
       QRCode.toCanvas(
         canvas,
         this.mycardInfo,
-        function(error) {
+        function (error) {
           if (error) console.error(error);
         }
       );
     },
-    logout() {
+    logout () {
       homeApi
         .logout({
           params: {
@@ -259,14 +291,14 @@ export default {
           }
         });
     },
-    go(urlName) {
+    go (urlName) {
       if (urlName) {
         this.$router.push({
           name: urlName
         });
       }
     },
-    scan: function() {
+    scan: function () {
       const _this = this;
       const params = {
         url: window.location.href,
@@ -290,12 +322,12 @@ export default {
           jsApiList: ["scanQRCode"]
         });
       });
-      wx.ready(function() {
+      wx.ready(function () {
         wx.scanQRCode({
           desc: "scanQRCode desc",
           needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
           scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
-          success: function(res) {
+          success: function (res) {
             var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
             _this.$router.push({
               name: "scan",
@@ -306,7 +338,7 @@ export default {
       });
     }
   },
-  activated() {
+  activated () {
     this.check();
   }
 };
@@ -382,7 +414,7 @@ export default {
         img {
           width: 58px;
           height: 58px;
-          margin:0 auto;
+          margin: 0 auto;
         }
       }
     }
@@ -413,7 +445,7 @@ export default {
       text-align: center;
       display: flex;
       flex-direction: column;
-      justify-content:center;
+      justify-content: center;
       box-sizing: border-box;
       border-right: 1px solid #e1eeee;
       border-bottom: 1px solid #e1eeee;

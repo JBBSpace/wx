@@ -2,32 +2,40 @@
   <div class="loginPage">
     <div class="logo"></div>
     <div class="form">
-      <div class="username" :class="[username.length ? 'active' : '', '']">
+      <div class="username"
+           :class="[username.length ? 'active' : '', '']">
         <div class="iconLeft">
-          <van-icon name="ren2"/>
+          <van-icon name="ren2" />
         </div>
         <div class="ipt">
-          <input type="text" placeholder="汉高账号" v-model="username">
+          <input type="text"
+                 placeholder="汉高账号"
+                 v-model="username">
         </div>
         <div class="iconRight">
-          <van-icon name="clear" v-show="username.length" @click="username=''"/>
+          <van-icon name="clear"
+                    v-show="username.length"
+                    @click="username=''" />
         </div>
       </div>
-      <div class="password" :class="[password.length ? 'active' : '']">
+      <div class="password"
+           :class="[password.length ? 'active' : '']">
         <div class="iconLeft">
-          <van-icon name="suo"/>
+          <van-icon name="suo" />
         </div>
         <div class="ipt">
-          <input :type="flag?'':'password'" placeholder="密码" v-model="password">
+          <input :type="flag?'':'password'"
+                 placeholder="密码"
+                 v-model="password">
         </div>
-        <div class="iconRight" @click="toggleFlag()">
-          <van-icon :name="flag?'password-view':'password-not-view'" v-show="password.length"/>
+        <div class="iconRight"
+             @click="toggleFlag()">
+          <van-icon :name="flag?'password-view':'password-not-view'"
+                    v-show="password.length" />
         </div>
       </div>
-      <div
-        :class="[username.length&&password.length ? '':'disabled' , 'submitBtn']"
-        @click="login"
-      >绑定账号</div>
+      <div :class="[username.length&&password.length ? '':'disabled' , 'submitBtn']"
+           @click="login">绑定账号</div>
     </div>
   </div>
 </template>  
@@ -38,7 +46,7 @@ import loginApi from "@/pages/index/services/login";
 import homeApi from "@/pages/index/services/home";
 import util from "@/pages/index/helper/util";
 export default {
-  data() {
+  data () {
     return {
       flag: false,
       username: "",
@@ -47,16 +55,16 @@ export default {
       code: util.getRequest().code
     };
   },
-  created() {
+  created () {
     if (!this.code) {
       this.redirect();
     }
   },
   methods: {
-    toggleFlag() {
+    toggleFlag () {
       this.flag = !this.flag;
     },
-    login() {
+    login () {
       if (this.username.length && this.password.length) {
         const data = {
           erp_user_id: this.username,
@@ -64,28 +72,29 @@ export default {
           code: this.code,
           company_id: localStorage.getItem("company_id")
         };
-
-        loginApi.login({ data: data }).then(res => {
-          const { status, message, data } = res.data;
-          if (status) {
-            this.$dialog
-              .alert({
-                message: message
-              })
-              .then(() => {
-                this.redirect();
+        setTimeout(() => {
+          loginApi.login({ data: data }).then(res => {
+            const { status, message, data } = res.data;
+            if (status) {
+              this.$dialog
+                .alert({
+                  message: message
+                })
+                .then(() => {
+                  this.redirect();
+                });
+            } else {
+              this.$router.push({
+                name: "home"
               });
-          } else {
-            this.$router.push({
-              name: "home"
-            });
-          }
-        });
+            }
+          });
+        }, 500)
       } else {
         this.$toast("请输入用户名或密码");
       }
     },
-    redirect() {
+    redirect () {
       homeApi
         .check({ params: { company_id: localStorage.getItem("company_id") } })
         .then(res => {

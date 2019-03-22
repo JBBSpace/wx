@@ -30,18 +30,25 @@
       </div>
     </div>
     <div class="echartPie">
-      <p class="chart-label">公司销售占比</p>
-      <ve-pie :data="chartData" :settings="chartSettings" :height="hgh">
-        <div v-if="dataEmpty" class="data-empty">查询成功 暂无数据</div>
-      </ve-pie>
-    </div>
-    <div class="echartHistogram">
       <p class="chart-label">公司销售</p>
-      <div class="scroll">
-        <ve-histogram :data="chartData" :extend="extend" :settings="chartSettings" :width="wth">
-          <div v-if="dataEmpty" class="data-empty">查询成功 暂无数据</div>
-        </ve-histogram>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>公司编号</th>
+            <th>公司名称</th>
+            <th class="right">销售金额</th>
+            <th class="right">占比</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in chartData" :key="item.com_name">
+            <td>{{item.c_com}}</td>
+            <td class="left">{{item.com_name}}</td>
+            <td class="right">{{thousandBitSeparator(item.money)}}</td>
+            <td class="right">{{item.ratio}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <van-popup v-model="popupShow" position="bottom">
       <van-picker
@@ -59,21 +66,6 @@
 import chartApi from "@/pages/index/services/chart";
 export default {
   data: function() {
-    this.chartSettings = {
-      radius: 80,
-      offsetY: 290
-    };
-    this.chartSettings = {
-      labelMap: {
-        money: "实售金额"
-      },
-      label: {
-        fontSize: 8
-      }
-    };
-    this.extend = {
-      "xAxis.0.axisLabel.rotate": 90
-    };
     return {
       popupShow: false,
       companyInfo: { id: "", name: "请选择公司名称", code: "" },
@@ -119,11 +111,7 @@ export default {
           type: "1"
         }
       ],
-      chartData: {
-        columns: ["com_name", "money"],
-        rows: []
-      },
-      dataEmpty: true
+      chartData: [],
     };
   },
   methods: {
@@ -155,36 +143,10 @@ export default {
         this.curType02 == "0" ? "/report/rep_rentA/" : "/report/rep_rentB/";
       chartApi.viewreportData({ url: urlStr, params: params }).then(res => {
         const { status, message, data } = res.data;
-        this.dataEmpty = true;
         if (status) {
           this.$toast(message);
         } else {
-          const lng = data.length;
-          if (lng > 0 && lng <= 10) {
-            this.chartSettings.offsetY = 250;
-            this.wth = "350px";
-            this.heigh = "400px";
-          } else if (lng > 10 && lng <= 15) {
-            this.chartSettings.offsetY = 270;
-            this.wth = "400px";
-            this.hgh = "450px";
-          } else if (lng > 15 && lng <= 20) {
-            this.chartSettings.offsetY = 330;
-            this.wth = "400px";
-            this.hgh = "500px";
-          } else if (lng > 20 && lng <= 30) {
-            this.chartSettings.offsetY = 450;
-            this.wth = "500px";
-            this.hgh = "600px";
-          } else {
-            this.chartSettings.offsetY = 500;
-            this.wth = "600px";
-            this.hgh = "600px";
-          }
-          if (lng > 0) {
-            this.dataEmpty = false;
-          }
-          this.chartData.rows = data;
+          this.chartData = data;
         }
       });
     },
@@ -203,9 +165,21 @@ export default {
       this.viewreportData();
     },
     onConfirm(value) {
-      this.company = value;
+      this.companyInfo = value;
       this.popupShow = !this.popupShow;
       this.viewreportData();
+    },
+    thousandBitSeparator(num) {
+      return (
+        num &&
+        (num.toString().indexOf(".") != -1
+          ? num.toString().replace(/(\d)(?=(\d{3})+\.)/g, function($0, $1) {
+              return $1 + ",";
+            })
+          : num.toString().replace(/(\d)(?=(\d{3}))/g, function($0, $1) {
+              return $1 + ",";
+            }))
+      );
     }
   },
   mounted() {
@@ -283,21 +257,62 @@ export default {
       }
     }
   }
-  .data-empty {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.7);
-    color: #888;
+  table {
+    width: 100%;
+    border-collapse: collapse;
     font-size: 28px;
+    thead {
+      tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+        th {
+          text-align: center;
+          border: 1px solid #ebedf0; /*no*/
+          padding: 25px 10px;
+          color: #428bca;
+          background-color: #f9f9f9;
+          &:nth-child(1) {
+            width: 130px;
+          }
+          &.right {
+            width: 160px;
+          }
+        }
+      }
+    }
+    tbody {
+      display: block;
+      tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+        td {
+          text-align: center;
+          border: 1px solid #ebedf0; /*no*/
+          padding: 15px 10px;
+          color: #727171;
+          &:nth-child(1) {
+            width: 130px;
+          }
+          &.right {
+            width: 160px;
+            text-align: right;
+          }
+          &.left {
+            text-align: left;
+          }
+        }
+        &:nth-child(odd) {
+          background-color: #fff;
+        }
+        &:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+      }
+    }
   }
-  .echartPie,
-  .echartHistogram {
+  .echartPie {
     height: auto;
     .chart-label {
       font-size: 30px;
@@ -310,11 +325,7 @@ export default {
     }
   }
   .echartPie .chart-label {
-    background: url("../assets/pie.png") no-repeat left center;
-    background-size: 40px 40px;
-  }
-  .echartHistogram .chart-label {
-    background: url("../assets/zhu.png") no-repeat left center;
+    background: url("../assets/table.png") no-repeat left center;
     background-size: 40px 40px;
   }
 }

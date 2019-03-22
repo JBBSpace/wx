@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-06 10:41:56 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2019-01-10 13:10:23
+ * @Last Modified time: 2019-03-15 13:18:51
  */
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
@@ -34,11 +34,12 @@ import {
   DatetimePicker,
   Toast,
   Step,
-  Steps
+  Steps,
+  Search
 } from 'vant';
 Vue.use(Tab).use(Tabs).use(Field).use(List).use(Collapse).use(CellGroup).use(CollapseItem).use(PullRefresh).use(Dialog).use(Panel).use(Tabbar).use(Loading).use(Popup);
 Vue.use(Button).use(Picker).use(Switch).use(SwitchCell).use(NavBar).use(Cell).use(CellGroup).use(Icon).use(DatetimePicker).use(Toast).use(Step).use(Steps);
-Vue.use(Checkbox).use(CheckboxGroup);
+Vue.use(Checkbox).use(CheckboxGroup).use(Search);
 import VCharts from 'v-charts';
 Vue.use(VCharts);
 import App from './App'
@@ -66,10 +67,10 @@ router.beforeEach((to, from, next) => {
       document.title = "生成 折扣券";
       next();
       break;
-    // case 'createDiscountnew':
-    //   document.title = "生成 折扣券";
-    //   next();
-    //   break;
+      // case 'createDiscountnew':
+      //   document.title = "生成 折扣券";
+      //   next();
+      //   break;
     case 'chartPeriodComparison':
       document.title = "周期销售表";
       next();
@@ -80,6 +81,10 @@ router.beforeEach((to, from, next) => {
       break;
     case 'chartCommodityMarket':
       document.title = "类别销售对比表";
+      next();
+      break;
+    case 'chartrepCjzs':
+      document.title = "成交走势图";
       next();
       break;
     case 'chartWeekSales':
@@ -121,12 +126,24 @@ router.beforeEach((to, from, next) => {
       document.title = "公司销售分析 ";
       next();
       break;
+    case 'supplier':
+      document.title = "供应商排名(前十名)";
+      next();
+      break;
     case 'msgList':
       document.title = "消息列表";
       next();
       break;
     case 'customerSet':
       document.title = "顾客评价提醒";
+      next();
+      break;
+    case 'evaluation':
+      document.title = "顾客评价";
+      next();
+      break;
+    case 'myclients':
+      document.title = "我的顾客";
       next();
       break;
     default:

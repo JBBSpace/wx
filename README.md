@@ -36,3 +36,6 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 周销售报表:14
 顾客评价提醒:15
 HuanShiTaiDanChunLe
+1,2,4,5,6,7,10,13
+5,7,10,13
+10,

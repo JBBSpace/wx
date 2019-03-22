@@ -32,6 +32,22 @@ const settings = {
   rep_week_com:{
     url: '/report/rep_week_com/',
     method: 'get'
+  },
+  rep_cjzs:{
+    url: '/report/rep_cjzs/',
+    method: 'get'
+  },
+  rep_supplier:{
+    url: '/report/rep_supplier/',
+    method: 'get'
+  },
+  rep_evaluation:{
+    url: '/report/rep_evaluation/',
+    method: 'get'
+  },
+  myclients:{
+    url: '/report/myclients/',
+    method: 'get'
   }
 }
 

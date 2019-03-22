@@ -41,7 +41,7 @@
               <th>上年
                 <br>同期
               </th>
-              <th>环比
+              <th>同比
                 <br>上升
               </th>
             </tr>
@@ -51,9 +51,9 @@
               <td class="td1">{{item.com_name}}</td>
               <td class="td2">{{item.Thisperiod}}</td>
               <td class="td3">{{item.lastperiod}}</td>
-              <td class="td4">{{item.Ringrise}}%</td>
+              <td class="td4">{{item.Ringrise}}</td>
               <td class="td3">{{item.periodlastyear}}</td>
-              <td class="td4">{{item.lastRingrise}}%</td>
+              <td class="td4">{{item.lastRingrise}}</td>
             </tr>
           </tbody>
         </table>

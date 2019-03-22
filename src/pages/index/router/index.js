@@ -85,6 +85,11 @@ export default new Router({
       meta:{keepAlive:false},
       component: resolve => require(['@/pages/index/views/chartCommodityMarket'], resolve)
     },{
+      path: '/chartrepCjzs',
+      name: 'chartrepCjzs',
+      meta:{keepAlive:false},
+      component: resolve => require(['@/pages/index/views/chartrepCjzs'], resolve)
+    },{
       path: '/one',
       name: 'one',
       meta:{keepAlive:false},
@@ -95,6 +100,16 @@ export default new Router({
       meta:{keepAlive:false},
       component: resolve => require(['@/pages/index/views/chartCommodityMarketTwo'], resolve)
     },{
+      path: '/supplier',
+      name: 'supplier',
+      meta:{keepAlive:false},
+      component: resolve => require(['@/pages/index/views/supplier'], resolve)
+    },{
+      path: '/myclients',
+      name: 'myclients',
+      meta:{keepAlive:false},
+      component: resolve => require(['@/pages/index/views/myclients'], resolve)
+    },{
       path: '/chartStoreSales',
       name: 'chartStoreSales',
       meta:{keepAlive:false},
@@ -104,6 +119,11 @@ export default new Router({
       name: 'chartWeekSales',
       meta:{keepAlive:false},
       component: resolve => require(['@/pages/index/views/chartWeekSales'], resolve)
+    },{
+      path: '/evaluation',
+      name: 'evaluation',
+      meta:{keepAlive:false},
+      component: resolve => require(['@/pages/index/views/evaluation'], resolve)
     },{
       path: '/msgListold',
       name: 'msgListold',
