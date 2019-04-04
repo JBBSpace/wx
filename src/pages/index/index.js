@@ -2,7 +2,7 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-06 10:41:56 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2019-03-15 13:18:51
+ * @Last Modified time: 2019-03-29 09:34:39
  */
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
@@ -106,6 +106,10 @@ router.beforeEach((to, from, next) => {
     case 'scan':
       next();
       document.title = "接单成功";
+      break;
+    case 'fullcode':
+      next();
+      document.title = "快递列表";
       break;
     case 'scanResult':
       next();

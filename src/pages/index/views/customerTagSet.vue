@@ -50,7 +50,7 @@ export default {
         if (tag.label_item_id == id) {
           tag.label_item_selected = !tag.label_item_selected;
         } else {
-          tag.label_item_selected = false;
+          // tag.label_item_selected = false;
         }
       });
     },

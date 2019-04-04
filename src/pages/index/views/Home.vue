@@ -157,7 +157,7 @@ export default {
           text: "客单价走势图",
           linkName: "chartrepCjzs",
           id: 17
-        },{
+        }, {
           imgPath: require("../assets/home/gkpj.png"),
           text: "顾客评价",
           linkName: "evaluation",
@@ -198,7 +198,12 @@ export default {
           text: "我的顾客",
           linkName: "myclients",
           id: 18
-        }, 
+        }, {
+          imgPath: require("../assets/home/EA03437EA852DD2BA4E46D87FB1A9B2A.png"),
+          text: "快递列表",
+          linkName: "fullcode",
+          id: 20
+        },
       ],
       hasMsg: false,
       mycardPopup: false,
@@ -329,10 +334,17 @@ export default {
           scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
           success: function (res) {
             var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-            _this.$router.push({
-              name: "scan",
-              query: { code: result }
-            });
+            if (result.slice(0, 3) == "BOX") {
+              _this.$router.push({
+                name: "scan",
+                query: { code: result }
+              });
+            } else {
+              _this.$router.push({
+                name: "scanResult",
+                params: { code: result }
+              });
+            }
           }
         });
       });

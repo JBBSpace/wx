@@ -1,19 +1,27 @@
 <template>
   <div class="scan">
     <div class="contain">
-      <img src="../assets/scan.png" alt>
+      <img src="../assets/scan.png"
+           alt>
       <template v-if="status==0">
         <p class="title">{{message}}</p>
         <p class="msg">订单编号:{{orderNumber.c_qrcode}}</p>
         <p class="msg">接单人:{{orderNumber.c_weixin}}</p>
+        <p class="msg colorFont"
+           @click="$router.push({
+          name: 'fullcode'
+        });">查看快递列表</p>
       </template>
-      <template v-if="status==4" class="title">
+      <template v-if="status==4"
+                class="title">
         <p class="title">{{message}}</p>
       </template>
       <p class="msg">继续扫码请点击下面按钮</p>
     </div>
-    <div class="scanBtn" @click="scan">
-      <img src="../assets/scanicon.png" alt>
+    <div class="scanBtn"
+         @click="scan">
+      <img src="../assets/scanicon.png"
+           alt>
       <span>继续扫码</span>
     </div>
   </div>
@@ -22,17 +30,17 @@
 import wx from "weixin-js-sdk";
 import scanAPI from "@/pages/index/services/scan";
 export default {
-  data() {
+  data () {
     return {
       scanResultCode: "",
       orderNumber: "",
       show: false,
-      status:'',
-      message:''
+      status: '',
+      message: ''
     };
   },
   methods: {
-    scan: function() {
+    scan: function () {
       const params = {
         url: window.location.href,
         company_id: window.localStorage.getItem("company_id")
@@ -57,12 +65,12 @@ export default {
         });
       });
 
-      wx.ready(function() {
+      wx.ready(function () {
         wx.scanQRCode({
           desc: "scanQRCode desc",
           needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
           scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
-          success: function(res) {
+          success: function (res) {
             var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
             if (result == _this.scanResultCode) {
               // _this.show = false;
@@ -83,7 +91,7 @@ export default {
         });
       });
     },
-    getOrderNumber() {
+    getOrderNumber () {
       const data = {
         c_qrcode: this.scanResultCode,
         company_id: localStorage.getItem("company_id")
@@ -94,18 +102,18 @@ export default {
         this.message = message;
         if (status == 3) {
           this.$toast(message);
-        }else if (status == 0) {
+        } else if (status == 0) {
           this.orderNumber = data;
         }
       });
     }
   },
-  created() {
+  created () {
     this.scanResultCode = this.$route.query.code;
   },
   watch: {
     // 如果 `question` 发生改变，这个函数就会运行
-    scanResultCode: function() {
+    scanResultCode: function () {
       this.getOrderNumber();
     }
   }
@@ -132,6 +140,9 @@ export default {
       font-size: 28px;
       color: #727171;
       padding: 10px 50px;
+    }
+    .colorFont {
+      color: #51b8cb;
     }
   }
   .scanBtn {

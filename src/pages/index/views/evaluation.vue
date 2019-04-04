@@ -1,37 +1,39 @@
 <template>
   <div class="chart-commodity-market-two">
-    <div class="company-name" v-if="!role">
+    <div class="company-name"
+         v-if="!role">
       <span class="label">公司名称：</span>
-      <span class="select-text" @click="popupShow = !popupShow">{{companyInfo.name}}</span>
+      <span class="select-text"
+            @click="popupShow = !popupShow">{{companyInfo.name}}</span>
     </div>
     <div class="echart-type">
-      <van-collapse v-model="activeNames" accordion>
-        <van-collapse-item title="报表类型：" :name="1" :border="false">
+      <van-collapse v-model="activeNames"
+                    accordion>
+        <van-collapse-item title="报表类型："
+                           :name="1"
+                           :border="false">
           <div class="info">
-            <span
-              v-for="item in echartTypeList"
-              :class="[{ active: isActive(item.Datetype) }, 'item']"
-              :key="item.Datetype"
-              @click="toggleType(item.Datetype)"
-            >{{item.text}}</span>
+            <span v-for="item in echartTypeList"
+                  :class="[{ active: isActive(item.Datetype) }, 'item']"
+                  :key="item.Datetype"
+                  @click="toggleType(item.Datetype)">{{item.text}}</span>
           </div>
         </van-collapse-item>
       </van-collapse>
       <div class="cp">
         <p>{{role?"展示类型：":"排序："}}</p>
         <div class="info">
-            <span
-              v-for="item in echart2TypeList"
-              :class="[{ active: isActive2(item.order) }, 'item']"
-              :key="item.order"
-              @click="toggleType2(item.order)"
-            >{{item.text}}</span>
-          </div>
+          <span v-for="item in echart2TypeList"
+                :class="[{ active: isActive2(item.order) }, 'item']"
+                :key="item.order"
+                @click="toggleType2(item.order)">{{item.text}}</span>
+        </div>
       </div>
     </div>
-      <div class="table">
+    <div class="table">
       <p class="chart-label">顾客评价表</p>
-      <div v-if="dataEmpty" class="data-empty">查询成功 暂无数据</div>
+      <div v-if="dataEmpty"
+           class="data-empty">查询成功 暂无数据</div>
       <div v-else>
         <table>
           <thead>
@@ -48,14 +50,16 @@
           </thead>
           <tbody>
             <template v-if="role">
-              <tr v-for="(item,index) in tableData" :key="index">
+              <tr v-for="(item,index) in tableData"
+                  :key="index">
                 <td>{{item.c_clientname}}</td>
                 <td>{{item.c_degree}}</td>
                 <td>{{item.date}}</td>
               </tr>
             </template>
             <template v-else>
-              <tr v-for="(item,index) in tableData" :key="index">
+              <tr v-for="(item,index) in tableData"
+                  :key="index">
                 <td>{{item.c_com}}</td>
                 <td class="center">{{item.com_name}}</td>
                 <td>{{item.c_degree}}</td>
@@ -65,14 +69,13 @@
         </table>
       </div>
     </div>
-    <van-popup v-model="popupShow" position="bottom">
-      <van-picker
-        show-toolbar
-        value-key="name"
-        :columns="companyList"
-        @cancel="popupShow = !popupShow"
-        @confirm="onConfirm"
-      />
+    <van-popup v-model="popupShow"
+               position="bottom">
+      <van-picker show-toolbar
+                  value-key="name"
+                  :columns="companyList"
+                  @cancel="popupShow = !popupShow"
+                  @confirm="onConfirm" />
     </van-popup>
   </div>
 </template>
@@ -80,50 +83,50 @@
 <script>
 import chartApi from "@/pages/index/services/chart";
 export default {
-  data: function() {
+  data: function () {
     return {
       popupShow: false,
       companyInfo: { id: "", name: "请选择公司名称", code: "" },
       companyList: [],
-      role:localStorage.getItem("role")==="clerk",
+      role: localStorage.getItem("role") === "clerk",
       activeNames: 1,
       Datetype: "0",
       orderClerk: "date",
       orderTop: "des",
       echartTypeList: [
         {
-          text: "日报",
+          text: "今日",
           Datetype: "0"
         },
         {
-          text: "周报",
+          text: "本周",
           Datetype: "1"
         },
         {
-          text: "月报",
+          text: "本月",
           Datetype: "2"
         },
         {
-          text: "季度报",
+          text: "本季度",
           Datetype: "3"
         },
         {
-          text: "半年报",
+          text: "本半年",
           Datetype: "4"
         },
         {
-          text: "年报",
+          text: "本年",
           Datetype: "5"
-        },{
+        }, {
           text: "昨日",
           Datetype: "10"
         },
         {
-          text: "上周报",
+          text: "上周",
           Datetype: "11"
         },
         {
-          text: "上月报",
+          text: "上月",
           Datetype: "12"
         },
         {
@@ -143,33 +146,33 @@ export default {
       dataEmpty: true
     };
   },
-  computed:{
-    echart2TypeList:function(){
-      if(this.role){
+  computed: {
+    echart2TypeList: function () {
+      if (this.role) {
         return [{
-        text: "全部",
-        order: "date"
-      },{
-        text: "差评",
-        order: "bad"
-      }]
-      }else{
+          text: "全部",
+          order: "date"
+        }, {
+          text: "差评",
+          order: "bad"
+        }]
+      } else {
         return [{
-        text: "降序",
-        order: "des"
-      },{
-        text: "升序",
-        order: "asc"
-      }]
+          text: "降序",
+          order: "des"
+        }, {
+          text: "升序",
+          order: "asc"
+        }]
       }
     }
   },
   methods: {
-    viewreportData() {
+    viewreportData () {
       const params = {
         Datetype: this.Datetype,
         company_id: localStorage.getItem("company_id"),
-        order: this.role?this.orderClerk:this.orderTop,
+        order: this.role ? this.orderClerk : this.orderTop,
         comid: this.companyInfo.id ? this.companyInfo.id : ""
       };
       chartApi.rep_evaluation({ params: params }).then(res => {
@@ -186,7 +189,7 @@ export default {
         }
       });
     },
-    initCompanyList() {
+    initCompanyList () {
       const params = {
         company_id: localStorage.getItem("company_id"),
         name: "st_company"
@@ -204,50 +207,50 @@ export default {
         }
       });
     },
-    isActive(isActive) {
+    isActive (isActive) {
       return this.Datetype === isActive;
     },
-    isActive2(order) {
-      if(this.role){
+    isActive2 (order) {
+      if (this.role) {
         return this.orderClerk === order;
-      }else{
+      } else {
         return this.orderTop === order;
       }
     },
-    toggleType(type) {
+    toggleType (type) {
       this.Datetype = type;
       this.viewreportData();
     },
-    toggleType2(type) {
-      if(this.role){
+    toggleType2 (type) {
+      if (this.role) {
         this.orderClerk = type;
-      }else{
+      } else {
         this.orderTop = type;
       }
       this.viewreportData();
     },
-    onConfirm(value) {
+    onConfirm (value) {
       this.companyInfo = value;
       this.popupShow = !this.popupShow;
       this.viewreportData();
     },
-    thousandBitSeparator(num) {
+    thousandBitSeparator (num) {
       return (
         num &&
         (num.toString().indexOf(".") != -1
-          ? num.toString().replace(/(\d)(?=(\d{3})+\.)/g, function($0, $1) {
-              return $1 + ",";
-            })
-          : num.toString().replace(/(\d)(?=(\d{3}))/g, function($0, $1) {
-              return $1 + ",";
-            }))
+          ? num.toString().replace(/(\d)(?=(\d{3})+\.)/g, function ($0, $1) {
+            return $1 + ",";
+          })
+          : num.toString().replace(/(\d)(?=(\d{3}))/g, function ($0, $1) {
+            return $1 + ",";
+          }))
       );
     }
   },
-  created() {
-    if(this.role){
+  created () {
+    if (this.role) {
       this.viewreportData();
-    }else{
+    } else {
       this.initCompanyList()
     }
   }
@@ -276,8 +279,8 @@ export default {
     }
   }
   .echart-type {
-    .cp{
-      padding:0 30px;
+    .cp {
+      padding: 0 30px;
       font-size: 28px;
       display: flex;
       align-items: center;
@@ -366,5 +369,5 @@ export default {
       }
     }
   }
-  }
+}
 </style>  

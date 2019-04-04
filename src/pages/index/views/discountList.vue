@@ -2,27 +2,43 @@
  * @Author: 姬兵兵 
  * @Date: 2018-06-12 13:26:04 
  * @Last Modified by: 姬兵兵
- * @Last Modified time: 2018-12-21 14:06:07
+ * @Last Modified time: 2019-04-04 09:44:15
  */
 <template>
   <div>
-    <div class="row" style="padding:15px 16px;">
+    <div class="row"
+         style="padding:15px 16px;">
       <span class="item discount">折扣</span>
       <span class="item type">类型</span>
       <span class="item createdate">生成日期</span>
       <span class="item operation">操作</span>
     </div>
-    <van-list v-model="loading" :finished="finished" @load="getTable">
-      <van-cell v-for="item in list" :key="item.id" @click="detailInfo(item)">
+    <van-list v-model="loading"
+              :finished="finished"
+              @load="getTable">
+      <van-cell v-for="item in list"
+                :key="item.id"
+                @click="detailInfo(item)">
         <span class="item discount">{{item.discount}}{{ item.discount=="--"?"":item.mode==2?"":"%"}}</span>
-        <span class="item type">{{item.type}}</span>
+        <span class="item type">
+          <template v-if="item.mode === 0">
+            整单券
+          </template>
+          <template v-if="item.mode === 1">
+            类别券
+          </template>
+          <template v-if="item.mode === 2">
+            现金券
+          </template>
+        </span>
         <span class="item createdate">{{item.createdate}}</span>
         <template v-if="item.userflag === 1">
           <span class="item operation usered">已使用</span>
         </template>
         <template v-else-if="item.userflag === 0&&item.isexpiry===0">
           <span class="item operation">
-            <van-button size="mini" @click.stop="invalid(item.id)">作废</van-button>
+            <van-button size="mini"
+                        @click.stop="invalid(item.id)">作废</van-button>
           </span>
         </template>
         <template v-else-if="item.userflag === 0&&item.isexpiry===1">
@@ -33,12 +49,11 @@
         </template>
       </van-cell>
     </van-list>
-    <van-dialog v-model="show" title="折扣券使用信息">
+    <van-dialog v-model="show"
+                title="折扣券使用信息">
       <p class="msgInfo">
-        <span
-          v-for="(item,index) in dialog.ClassInfo"
-          :key="index"
-        >{{item.classname}} : {{item.ratio}}%</span>
+        <span v-for="(item,index) in dialog.ClassInfo"
+              :key="index">{{item.classname}} : {{item.ratio}}%</span>
       </p>
       <p class="msgInfo">
         <span>折扣码 ：</span>
@@ -64,7 +79,7 @@
 import discountListApi from "@/pages/index/services/discountList";
 import util from "@/pages/index/helper/util";
 export default {
-  data() {
+  data () {
     return {
       list: [],
       loading: false,
@@ -75,7 +90,7 @@ export default {
   },
   methods: {
     // 初始化表格数据
-    getTable() {
+    getTable () {
       const params = {
         count: this.list.length + 1,
         company_id: window.localStorage.getItem("company_id")
@@ -105,7 +120,7 @@ export default {
       );
     },
     // 作废操作
-    invalid(id) {
+    invalid (id) {
       discountListApi
         .invalid({
           data: {
@@ -131,7 +146,7 @@ export default {
         );
     },
     // 弹框展示使用明细
-    detailInfo(row) {
+    detailInfo (row) {
       if (row.userflag == 1) {
         this.show = true;
         this.dialog = row;

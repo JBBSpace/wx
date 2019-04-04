@@ -48,6 +48,10 @@ const settings = {
   myclients:{
     url: '/report/myclients/',
     method: 'get'
+  },
+  fullcode:{
+    url: '/retail/fullcode/',
+    method: 'get'
   }
 }
 

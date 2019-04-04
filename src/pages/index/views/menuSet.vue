@@ -20,29 +20,29 @@
               @click="toggleUserType(item.roleType)">{{item.text}}</span>
       </div>
       <!-- <div class="wrapper" ref="wrapper"> -->
-        <div class="userList content">
-          <van-cell-group>
-            <van-field v-model="keyWord"
-                      @input="fSearch"
-                      placeholder="请输入检索关键字"
-                      left-icon="search" />
-          </van-cell-group>
-          <div class="userItem"
-              v-for="(item) in rearchUser"
-              :key="item.id"
-              @click="selectUser(item.id)">
-            <div class="name">
-              {{item.name}}
-              <span class="wxid">({{item.wx_user_id}})</span>
-            </div>
-            <div>
-              <input type="checkbox"
-                    :id="item.id"
-                    :value="item.id"
-                    v-model="usersChecked">
-            </div>
+      <div class="userList content">
+        <van-cell-group>
+          <van-field v-model="keyWord"
+                     @input="fSearch"
+                     placeholder="请输入检索关键字"
+                     left-icon="search" />
+        </van-cell-group>
+        <div class="userItem"
+             v-for="(item) in rearchUser"
+             :key="item.id"
+             @click="selectUser(item.id)">
+          <div class="name">
+            {{item.name}}
+            <span class="wxid">({{item.wx_user_id}})</span>
+          </div>
+          <div>
+            <input type="checkbox"
+                   :id="item.id"
+                   :value="item.id"
+                   v-model="usersChecked">
           </div>
         </div>
+      </div>
       <!-- </div> -->
       <div class="nextStep-contain">
         <span class="nextStep"
@@ -61,23 +61,23 @@
                   @click="toggleMenuType(item.role)">{{item.text}}</span>
           </div>
           <!-- <div class="wrapper02" ref="wrapper02"> -->
-            <div class="list content">
-              <div class="userItem"
-                  v-for="(item) in menus"
-                  v-show="isShow(item.id)"
-                  :key="item.id"
-                  @click="selectMenu(item.id)">
-                <div class="name">
-                  <span :class="[menusChecked.includes(item.id) ? 'active' : '']">{{item.title}}</span>
-                </div>
-                <div>
-                  <input type="checkbox"
-                        :id="item.id"
-                        :value="item.id"
-                        v-model="menusChecked">
-                </div>
+          <div class="list content">
+            <div class="userItem"
+                 v-for="(item) in menus"
+                 v-show="isShow(item.id)"
+                 :key="item.id"
+                 @click="selectMenu(item.id)">
+              <div class="name">
+                <span :class="[menusChecked.includes(item.id) ? 'active' : '']">{{item.title}}</span>
+              </div>
+              <div>
+                <input type="checkbox"
+                       :id="item.id"
+                       :value="item.id"
+                       v-model="menusChecked">
               </div>
             </div>
+          </div>
           <!-- </div> -->
           <div class="nextStep-contain">
             <span class="nextStep backBtn"
@@ -190,7 +190,7 @@ export default {
         {
           title: "顾客评价",
           id: 19
-        }, 
+        },
         {
           title: "客单价走势图",
           id: 17
@@ -198,6 +198,10 @@ export default {
         {
           title: "我的顾客",
           id: 18
+        },
+        {
+          title: "快递列表",
+          id: 20
         }
       ],
       menulist: [],
@@ -224,14 +228,7 @@ export default {
     }
   },
   methods: {
-    _initScroll() {
-      //  if (!this.scroll) {
-      //     this.scroll = new BScroll(this.$refs.wrapper, {
-      //       click: true //允许better-scroll列表上的点击事件
-      //     });
-      //   } else {
-      //     this.scroll.refresh();
-      //   };
+    _initScroll () {
       this.init();
     },
     init () {
@@ -259,7 +256,8 @@ export default {
       if (flag) {
         this.usersChecked = []
         this.rearchUser = this.users.filter((value) => {  //过滤数组元素
-          return value.filter.indexOf(this.keyWord) > -1; //如果包含字符返回true
+
+          return value.filter.indexOf(this.keyWord.toLowerCase()) > -1; //如果包含字符返回true
         });
       } else {
         this.rearchUser = this.users
@@ -335,13 +333,13 @@ export default {
       this.role = role;
       switch (role) {
         case "t":
-          this.menusChecked = [1, 2, 4, 5, 6, 7, 10, 13, 15,19];
+          this.menusChecked = [1, 2, 4, 5, 6, 7, 10, 13, 15, 19];
           break;
         case "m":
-          this.menusChecked = [5, 7, 10, 13, 17,19];
+          this.menusChecked = [5, 7, 10, 13, 17, 19];
           break;
         case "c":
-          this.menusChecked = [10, 18,19];
+          this.menusChecked = [10, 18, 19];
           break;
         default:
           break;
@@ -373,10 +371,10 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     //调用scroll函数，实现滚动
     // this.$nextTick(() => {
-      this._initScroll();
+    this._initScroll();
     // });
   }
 };
@@ -392,7 +390,7 @@ export default {
     background: #f2f2f2;
     margin: 0 auto;
     position: fixed;
-    top:0;
+    top: 0;
     left: 0;
     box-sizing: border-box;
     .allChecked-contain {
@@ -412,11 +410,11 @@ export default {
       }
     }
     .roleSelect {
-      width:100%;
+      width: 100%;
       position: fixed;
-      left:0;
+      left: 0;
       z-index: 1000;
-      top:100px;
+      top: 100px;
       margin: 0 6px;
       display: flex;
       height: 70px;
@@ -441,24 +439,24 @@ export default {
         }
       }
     }
-    .userRoleSelect{
+    .userRoleSelect {
       margin: 0 6px;
-      width:100%;
+      width: 100%;
       display: flex;
-      width:100%;
+      width: 100%;
       height: 70px;
       line-height: 70px;
       position: fixed;
       left: 0;
       z-index: 1000;
       background: #f2f2f2;
-      top:100px;
+      top: 100px;
       .roleItem {
-        margin:0 8px;
+        margin: 0 8px;
         height: 66px;
         flex: 1;
         background-color: #fff;
-        border: 1px solid #51b8cb;/*no*/
+        border: 1px solid #51b8cb; /*no*/
         border-radius: 10px;
         font-size: 32px;
         color: #51b8cb;
@@ -472,20 +470,20 @@ export default {
     }
     .wrapper {
       width: 100%;
-      height:75%;
+      height: 75%;
       position: absolute;
       left: 0;
-      top:180px;
+      top: 180px;
       bottom: 180px;
       overflow: hidden;
-      .content{
+      .content {
         width: 100%;
       }
     }
     .userList,
     .list {
       width: 750px;
-      margin-top:75px;
+      margin-top: 75px;
       background: #fff;
       font-size: 30px;
       height: calc(100vh - 330px);
@@ -512,11 +510,11 @@ export default {
       display: none;
     }
     .nextStep-contain {
-      width:100%;
+      width: 100%;
       height: 160px;
       line-height: 160px;
       text-align: center;
-      position:absolute;
+      position: absolute;
       bottom: 0;
       .nextStep {
         padding: 20px 100px;
@@ -584,13 +582,13 @@ export default {
       }
       .wrapper02 {
         width: 100%;
-        height:75%;
+        height: 75%;
         position: absolute;
         left: 0;
-        top:180px;
+        top: 180px;
         bottom: 180px;
         overflow: hidden;
-        .content{
+        .content {
           width: 100%;
         }
       }

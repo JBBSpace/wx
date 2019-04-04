@@ -1,132 +1,142 @@
 <template>
   <div class="createDiscountPage">
     <!-- 折扣切换tab -->
-    <van-tabs sticky v-model="tabType" @change="step=0">
+    <van-tabs sticky
+              v-model="tabType"
+              @change="step=0">
       <van-tab title="整单折扣">
         <div v-if="step">
           <van-cell-group>
-            <van-field
-              :label="label"
-              v-model="rules[0].discount"
-              :error-message="err?'':label"
-              placeholder="请输入折扣额度"
-              center
-              type="number"
-            />
+            <van-field :label="label"
+                       v-model="rules[0].discount"
+                       :error-message="err?'':label"
+                       placeholder="请输入折扣额度"
+                       center
+                       type="number" />
           </van-cell-group>
         </div>
-        <div v-else class="rule">
-          <div v-if="rules[0].list.length" class="tags">
-            <span
-              v-for="item in rules['0'].list"
-              :class="[item.rollid==rules[0].roll.rollid ? 'active' : '', 'tag']"
-              :key="item.rollid"
-              @click="ruleMothed(item)"
-            >{{item.rollname}}</span>
+        <div v-else
+             class="rule">
+          <div v-if="rules[0].list.length"
+               class="tags">
+            <span v-for="item in rules['0'].list"
+                  :class="[item.rollid==rules[0].roll.rollid ? 'active' : '', 'tag']"
+                  :key="item.rollid"
+                  @click="ruleMothed(item)">{{item.rollname}}</span>
           </div>
-          <div v-else class="noTag">本月暂无可选择的折扣规则</div>
+          <div v-else
+               class="noTag">本月暂无可选择的折扣规则</div>
         </div>
       </van-tab>
       <van-tab title="类别折扣">
-        <div v-if="step">
-          <van-checkbox-group class="checkbox_group" v-model="checkedClass">
-            <van-field
-              v-for="(item) in classList"
-              :key="item.classid"
-              center
-              v-model="item.discount"
-              type="number"
-              :placeholder="labelClass"
-              :error-message="discountErr(item)"
-            >
-              <van-checkbox slot="label" :key="item.classid" :name="item.classid">{{ item.name }}</van-checkbox>
+        <div v-if="step"
+             class="aa">
+          <van-checkbox-group class="checkbox_group"
+                              v-model="checkedClass">
+            <van-field v-for="(item) in classList"
+                       :key="item.classid"
+                       center
+                       v-model="item.discount"
+                       type="number"
+                       :placeholder="labelClass"
+                       :error-message="discountErr(item)">
+              <van-checkbox slot="label"
+                            :key="item.classid"
+                            :name="item.classid">{{ item.name }}</van-checkbox>
             </van-field>
           </van-checkbox-group>
         </div>
-        <div v-else class="rule">
-          <div v-if="rules[1].list.length" class="tags">
-            <span
-              v-for="item in rules['1'].list"
-              :class="[item.rollid==rules[1].roll.rollid ? 'active' : '', 'tag']"
-              :key="item.rollid"
-              @click="ruleMothed(item)"
-            >{{item.rollname}}</span>
+        <div v-else
+             class="rule">
+          <div v-if="rules[1].list.length"
+               class="tags">
+            <span v-for="item in rules['1'].list"
+                  :class="[item.rollid==rules[1].roll.rollid ? 'active' : '', 'tag']"
+                  :key="item.rollid"
+                  @click="ruleMothed(item)">{{item.rollname}}</span>
           </div>
-          <div v-else class="noTag">本月暂无可选择的折扣规则</div>
+          <div v-else
+               class="noTag">本月暂无可选择的折扣规则</div>
         </div>
       </van-tab>
       <van-tab title="现金折扣">
         <div v-if="step">
           <van-cell-group>
-            <van-field
-              :label="labelCash"
-              v-model="rules[2].discount"
-              :error-message="errCash?'':labelCash"
-              placeholder="请输入折扣额度"
-              center
-              type="number"
-            />
+            <van-field :label="labelCash"
+                       v-model="rules[2].discount"
+                       :error-message="errCash?'':labelCash"
+                       placeholder="请输入折扣额度"
+                       center
+                       type="number" />
           </van-cell-group>
         </div>
-        <div v-else class="rule">
-          <div v-if="rules[2].list.length" class="tags">
-            <span
-              v-for="item in rules['2'].list"
-              :class="[item.rollid==rules[2].roll.rollid ? 'active' : '', 'tag']"
-              :key="item.rollid"
-              @click="ruleMothed(item)"
-            >{{item.rollname}}</span>
+        <div v-else
+             class="rule">
+          <div v-if="rules[2].list.length"
+               class="tags">
+            <span v-for="item in rules['2'].list"
+                  :class="[item.rollid==rules[2].roll.rollid ? 'active' : '', 'tag']"
+                  :key="item.rollid"
+                  @click="ruleMothed(item)">{{item.rollname}}</span>
           </div>
-          <div v-else class="noTag">本月暂无可选择的折扣规则</div>
+          <div v-else
+               class="noTag">本月暂无可选择的折扣规则</div>
         </div>
       </van-tab>
     </van-tabs>
     <!-- 底部操作按钮 -->
     <van-tabbar>
-      <van-button
-        v-if="step==0"
-        :disabled="rules[this.tabType].roll==''"
-        type="primary"
-        size="large"
-        @click="setDiscount"
-      >去设置折扣</van-button>
-      <van-button
-        v-if="step==1"
-        :disabled="disabled"
-        type="primary"
-        size="large"
-        @click="setNotes"
-      >添加备注</van-button>
+      <van-button v-if="step==0"
+                  :disabled="rules[this.tabType].roll==''"
+                  type="primary"
+                  size="large"
+                  @click="setDiscount">去设置折扣</van-button>
+      <van-button v-if="step==1"
+                  :disabled="disabled"
+                  type="primary"
+                  size="large"
+                  @click="setNotes">添加备注</van-button>
     </van-tabbar>
-    <van-popup v-model="isShow" position="right" :overlay="false">
-      <van-steps :active="parseInt(step-2)" active-color="#51b8cb">
+    <van-popup v-model="isShow"
+               position="right"
+               :overlay="false">
+      <van-steps :active="parseInt(step-2)"
+                 active-color="#51b8cb">
         <van-step>添加备注</van-step>
         <van-step>设置过期时间</van-step>
         <van-step>完成</van-step>
       </van-steps>
       <!-- 备注对话框 -->
-      <div class="step2" v-if="step===2">
+      <div class="step2"
+           v-if="step===2">
         <div class="notesContain">
-          <van-field v-model="notes.notes" type="textarea" placeholder="请输入备注信息" rows="8" autosize/>
+          <van-field v-model="notes.notes"
+                     type="textarea"
+                     placeholder="请输入备注信息"
+                     rows="8"
+                     autosize />
         </div>
         <div class="nextStep-contain">
-          <span class="nextStep backBtn" @click="step=1">上一步</span>
-          <span class="nextStep" @click="toTime">过期时间</span>
+          <span class="nextStep backBtn"
+                @click="step=1">上一步</span>
+          <span class="nextStep"
+                @click="toTime">过期时间</span>
         </div>
       </div>
       <!-- 时间选择 -->
-      <div class="step2" v-if="step===3">
+      <div class="step2"
+           v-if="step===3">
         <div class="notesContain">
-          <van-datetime-picker
-            v-model="time.expday"
-            type="date"
-            :show-toolbar="false"
-            :min-date="time.minDate"
-          />
+          <van-datetime-picker v-model="time.expday"
+                               type="date"
+                               :show-toolbar="false"
+                               :min-date="time.minDate" />
         </div>
         <div class="nextStep-contain">
-          <span class="nextStep backBtn" @click="step=2">上一步</span>
-          <span class="nextStep" @click="postDiscountData">完成</span>
+          <span class="nextStep backBtn"
+                @click="step=2">上一步</span>
+          <span class="nextStep"
+                @click="postDiscountData">完成</span>
         </div>
       </div>
     </van-popup>
@@ -135,8 +145,21 @@
   
 <script>
 import createDiscountApi from "@/pages/index/services/createDiscount";
+let moment = require('moment');
+let date = new Date();
+//获取当前月的第一天     
+let monthStart = date.setDate(1);
+//获取当前月 
+let currentMonth = date.getMonth();
+//获取到下一个月，++currentMonth表示本月+1，一元运算
+let nextMonth = ++currentMonth;
+//获取到下个月的第一天      
+let nextMonthFirstDay = new Date(date.getFullYear(), nextMonth, 1);
+//一天时间的毫秒数
+let oneDay = 1000 * 60 * 60 * 24;
+
 export default {
-  data() {
+  data () {
     return {
       step: 0,
       tabType: 1,
@@ -151,20 +174,20 @@ export default {
         notes: ""
       },
       time: {
-        expday: "",
-        minDate: new Date()
+        expday: new Date(moment(nextMonthFirstDay - oneDay).format("YYYY-MM-DD")),
+        minDate: date
       }
     };
   },
   computed: {
-    err() {
+    err () {
       return (
         this.rules[0].discount == "" ||
         (this.rules[0].discount >= this.rules[0].roll.beg_discount &&
           this.rules[0].discount <= this.rules[0].roll.end_discount)
       );
     },
-    errCash() {
+    errCash () {
       if (
         this.rules[2].discount == "" ||
         this.rules[2].roll.max_money == "AllUser"
@@ -174,28 +197,28 @@ export default {
         return this.rules[2].discount <= this.rules[2].roll.max_money;
       }
     },
-    label() {
+    label () {
       return `折扣额度(${this.rules[0].roll.beg_discount} - ${
         this.rules[0].roll.end_discount
-      })% ：`;
+        })% ：`;
     },
-    labelCash() {
+    labelCash () {
       return this.rules[2].roll.max_money === "AllUser"
         ? "折扣金额"
         : `最高折扣${this.rules[2].roll.max_money}元`;
     },
-    labelClass() {
+    labelClass () {
       return `折扣额度(${this.rules[1].roll.beg_discount} - ${
         this.rules[1].roll.end_discount
-      })% ：`;
+        })% ：`;
     },
     isShow: {
-      get() {
+      get () {
         return this.step !== 0 && this.step !== 1;
       },
-      set() {}
+      set () { }
     },
-    disabled() {
+    disabled () {
       if (this.tabType == 0) {
         return this.rules[0].discount == "" || !this.err;
       } else if (this.tabType == 1) {
@@ -206,14 +229,14 @@ export default {
     }
   },
   watch: {
-    tabType: function() {
+    tabType: function () {
       if (this.rules[this.tabType].list === "") {
         this.getRules();
       }
     }
   },
   methods: {
-    getRules() {
+    getRules () {
       const params = {
         company_id: localStorage.getItem("company_id"),
         name: "discount_roll",
@@ -224,7 +247,7 @@ export default {
         this.rules[this.tabType].list = res.data.data;
       });
     },
-    ruleMothed(item) {
+    ruleMothed (item) {
       if (this.tabType == 2) {
         if (item.max_money) {
           this.rules[this.tabType].roll = item;
@@ -239,23 +262,27 @@ export default {
         }
       }
     },
-    setDiscount() {
+    setDiscount () {
       this.step = 1;
       if (this.tabType == 1) {
         this.getClassList();
       }
     },
-    getClassList() {
+    getClassList () {
       const params = {
         company_id: localStorage.getItem("company_id"),
-        name: "st_class"
+        name: "st_class",
+        rollid: this.rules[this.tabType].roll.rollid
       };
       createDiscountApi.rules({ params }).then(res => {
-        console.log(res.data);
+        if (res.data.status || res.data.data.length == 0) {
+          this.$toast(res.data.message);
+          return;
+        }
         this.classList = res.data.data;
       });
     },
-    discountErr({ discount, classid }) {
+    discountErr ({ discount, classid }) {
       const idIndex = this.checkedClass.indexOf(classid);
       const checkedClass = this.checkedClass;
       if (discount) {
@@ -279,16 +306,16 @@ export default {
         }
       }
     },
-    setNotes() {
+    setNotes () {
       this.step = 2;
     },
-    toTime() {
+    toTime () {
       if (this.time.expday == "") {
         this.time.expday = new Date();
       }
       this.step = 3;
     },
-    checkedData() {
+    checkedData () {
       const classObj = [];
       this.classList.map(item => {
         if (this.checkedClass.indexOf(item.classid) > -1) {
@@ -303,7 +330,7 @@ export default {
       });
       return classObj;
     },
-    postDiscountData() {
+    postDiscountData () {
       const data = {
         company_id: window.localStorage.getItem("company_id"),
         type: this.tabType,
@@ -344,7 +371,7 @@ export default {
       });
     }
   },
-  activated() {
+  activated () {
     this.getRules();
   }
 };
@@ -352,6 +379,10 @@ export default {
   
 <style lang="scss" scoped>
 .createDiscountPage {
+  .aa {
+    height: calc(100vh - 220px);
+    overflow-y: scroll;
+  }
   .rule {
     .tags {
       overflow-y: auto;
@@ -377,11 +408,11 @@ export default {
         }
       }
     }
-    .noTag{
+    .noTag {
       text-align: center;
       font-size: 30px;
       color: #666;
-      padding:300px 0;
+      padding: 300px 0;
     }
   }
   .step2 {

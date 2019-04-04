@@ -140,5 +140,11 @@ export default new Router({
       meta:{keepAlive:false},
       component: resolve => require(['@/pages/index/views/scan'], resolve)
     },
+    {
+      path: '/fullcode',
+      name: 'fullcode',
+      meta:{keepAlive:false},
+      component: resolve => require(['@/pages/index/views/fullcode'], resolve)
+    },
   ]
 })

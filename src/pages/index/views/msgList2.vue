@@ -1,22 +1,40 @@
 <template>
   <div class="msg-list">
-    <div class="wrapper" ref="wrapper">
+    <div class="company-name">
+      <span class="label">推送类型：</span>
+      <span class="select-text"
+            @click="popupShow = !popupShow">{{companyInfo.name}}</span>
+    </div>
+    <van-popup v-model="popupShow"
+               position="bottom">
+      <van-picker show-toolbar
+                  value-key="name"
+                  :columns="companyList"
+                  @cancel="popupShow = !popupShow"
+                  @confirm="onConfirm" />
+    </van-popup>
+    <div class="wrapper"
+         ref="wrapper">
       <!-- 内容列表 -->
       <ul class="content">
-        <li class="item" v-for="item in list" :key="item.id" @click="go(item)">
+        <li class="item"
+            v-for="item in filterList"
+            :key="item.id"
+            @click="go(item)">
           <div class="title">{{item.tag}}</div>
           <div class="time">{{item.msg_time}}</div>
           <div class="name">
-          <span v-for="(item,index) in newline(item.msg_content)" :key="index">
-            {{item}}
-            <br>
-          </span>
-        </div>
+            <span v-for="(item,index) in newline(item.msg_content)"
+                  :key="index">
+              {{item}}
+              <br>
+            </span>
+          </div>
           <span v-if="item.type != 0">
             <span :class="[item.is_read ? '':'active', 'tag']"></span>
             <div class="more">
               <span>更多</span>
-              <van-icon name="arrow"/>
+              <van-icon name="arrow" />
             </div>
           </span>
         </li>
@@ -28,21 +46,38 @@
 import BScroll from "better-scroll";
 import msgListApi from "@/pages/index/services/msgList";
 export default {
-  data() {
+  data () {
     return {
+      popupShow: false,
+      companyList: [{ id: "all", name: "全部", code: "" }, { id: "0", name: "数据推送", code: "" }, { id: "1", name: "报表订阅", code: "" }, { id: "2", name: "顾客评价", code: "" }],
+      companyInfo: { id: "all", name: "全部", code: "" },
       page: 1,
       list: [],
-      finished:false
+      finished: false,
     };
   },
-  created() {
+  computed: {
+    filterList: function () {
+      if (this.companyInfo.id == "all") {
+        return this.list
+      }
+      const _list = this.list.filter(item => {
+        return item.type == this.companyInfo.id
+      })
+      if (!_list.length) {
+        this.$toast("暂无该类型的消息")
+      }
+      return _list
+    }
+  },
+  created () {
     //调用scroll函数，实现滚动
     this.$nextTick(() => {
       this._initScroll();
     });
   },
   methods: {
-    _initScroll() {
+    _initScroll () {
       this.foodsScroll = new BScroll(this.$refs.wrapper, {
         probeType: 3, //让better-scroll监听scroll事件
         click: true //允许better-scroll列表上的点击事件
@@ -50,15 +85,15 @@ export default {
       this.onLoad();
       this.foodsScroll.on("scrollEnd", pos => {
         if (pos.y <= (this.foodsScroll.maxScrollY + 50)) {
-          if(this.finished){
+          if (this.finished) {
             this.$toast("没有更多了")
-          }else{
+          } else {
             this.onLoad();
           }
         }
       });
     },
-    onLoad() {
+    onLoad () {
       const params = {
         company_id: window.localStorage.getItem("company_id"),
         page: this.page
@@ -77,14 +112,14 @@ export default {
         }
       });
     },
-    go(item) {
+    go (item) {
       if (item.type) {
         this.$router.push({
           path: item.msg_url.split("#")[1]
         });
       }
     },
-    newline: function(value) {
+    newline: function (value) {
       let newlineArr = [];
       if (value.indexOf("###") > 0) {
         newlineArr = value.split("###");
@@ -93,6 +128,10 @@ export default {
       }
       return newlineArr;
     },
+    onConfirm (value, index) {
+      this.companyInfo = value;
+      this.popupShow = !this.popupShow;
+    }
   }
 };
 </script>  
@@ -101,15 +140,37 @@ export default {
 .msg-list {
   width: 100%;
   height: 100%;
+  .company-name {
+    display: flex;
+    // position: fixed;
+    background: #fff;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding: 10px 0;
+    font-size: 26px;
+    .select-text {
+      width: 480px;
+      font-size: 26px;
+      line-height: 68px;
+      color: #727171;
+      border: 1px solid #ebedf0; /*no*/
+      border-radius: 8px;
+      padding-left: 20px;
+      background: url("../assets/select.png") no-repeat 440px center;
+    }
+  }
   .wrapper {
     width: 100%;
-    height:100%;
+    height: 100%;
     position: absolute;
     left: 0;
-    top:30px;
+    top: 120px;
     overflow: hidden;
-    .content{
+    .content {
       width: 100%;
+      padding-bottom: 120px;
     }
   }
   .item {
